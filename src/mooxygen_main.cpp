@@ -88,12 +88,15 @@ int main(int argc, char**argv)
 		if (!project.parseSourceFiles()) 
 			return -1;
 
+		cout << endl << "Found: "<< project.mods.size() << " modules and " << project.vars.size() << " variables." << endl;
+
 
 		/****************************
             4. Generate outputs
 		 ****************************/
-
-		
+		if (!project.generateOutputs()) 
+			return -1;
+	
 
 
 		// All done!

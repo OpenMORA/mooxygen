@@ -57,10 +57,10 @@ bool CMooxygenOptions::loadFromFile(const string &f) /// false on error
 		return false;
 	}
 
-	string lin;
 	size_t  nLin=0;
 	while (!fi.eof() && !fi.fail())
 	{
+		string lin;
 		std::getline(fi,lin);
 		nLin++;
 
