@@ -2,7 +2,7 @@
    |                          The Mooxygen project                             |
    |                    http://code.google.com/p/mooxygen/                     |
    |                                                                           |
-   |   Copyright (C) 2009  Jose Luis Blanco <jlblanco@ctima.uma.es>            |
+   | Copyright (C) 2009-2010 Jose Luis Blanco <joseluisblancoc at gmail.com >  |
    |                                                                           |
    |    This software was written by Jose Luis Blanco,                         |
    |      University of Malaga (Spain).                                        |
@@ -24,36 +24,119 @@
    |                                                                           |
    +---------------------------------------------------------------------------+ */
 
-#include <mrpt/system/CDirectoryExplorer.h>
+#include "moox_app.h"
 
-using namespace mrpt;
-using namespace mrpt::utils;
-using namespace mrpt::system;
 using namespace std;
+using namespace mooxygen;
+
+// ------------------------------------------------------
+void createTemplateFile();
+void showUsage(const char *cmdLine);
 
 // ------------------------------------------------------
 //                        MAIN
 // ------------------------------------------------------
-int main()
+int main(int argc, char**argv)
 {
-	try
-	{
-		CDirectoryExplorer::TFileInfoList lst;
-		CDirectoryExplorer::explore(".",FILE_ATTRIB_DIRECTORY,lst);
+	try {
+		/****************************
+            0. Process command line
+		 ****************************/
+		if (argc>2)
+		{
+			showUsage(argv[0]);
+			return -1;
+		}
 
-		cout << lst.size() << endl;
+		if (argc==2 && argv[1][0]=='-')
+		{
+			if (!strcmp(argv[1],"--create"))
+			{
+				createTemplateFile();
+				return 0;
+			}
+			cerr << "ERROR: Unknown command: " << argv[1] << endl;
+			showUsage(argv[0]);
+			return -1;
+		}
 
+		string  mooxyfilename = "./Mooxyfile";
+		if (argc==2)
+			mooxyfilename = argv[1];
+
+		/****************************
+            1. Load config
+		 ****************************/
+		TApplication  project;
+		
+		if (!project.opts.loadFromFile(mooxyfilename))
+			return -1;
+
+		/****************************
+            2. Get list of files
+		 ****************************/
+		cout << "Scanning for source files..." << endl;
+		if (!project.scanForSourceFiles()) 
+			return -1;
+
+		cout << project.lstSourceFiles.size() << " source files found." << endl;
+
+		/****************************
+            3. Analize source code
+		 ****************************/
+		cout << "Analyzing source files..." << endl;
+		if (!project.parseSourceFiles()) 
+			return -1;
+
+
+		/****************************
+            4. Generate outputs
+		 ****************************/
+
+		
+
+
+		// All done!
+		cout << "Mooxygen is done." << endl;
 		return 0;
-	} catch (exception &e)
-	{
-		cerr << "EXCEPCTION: " << e.what() << endl;
-		return -1;
-	}
-	catch (...)
-	{
-		cerr << "Untyped excepcion!!";
+	} catch (exception &e) {
+		cerr << "Program finished due to error: " << e.what() << endl;
 		return -1;
 	}
 }
 
+
+// ------------------------------------------------------
+//                    EXIT
+// ------------------------------------------------------
+void mooxygen::exitProgram(int errCode, bool waitKey)
+{
+	if (waitKey) waitForKey();
+	exit(errCode);
+}
+
+
+// ------------------------------------------------------
+// ------------------------------------------------------
+void showUsage(const char *cmdLine)
+{
+	cout << " Usage: " << cmdLine << " [config_file]" << endl;
+	cout << "    or: " << cmdLine << " --create" << endl;
+	cout << "  If invoked without arguments, the configuration file will be assumed to be \"Mooxyfile\"" << endl;
+	cout << "  On a --create command, a Mooxyfile file will be created with a template project file." << endl;
+	cout << "  For more help:  http://code.google.com/p/mooxygen/" << endl;
+}
+
+// ------------------------------------------------------
+// ------------------------------------------------------
+void createTemplateFile()
+{
+	string out_fil = "./Mooxyfile";
+
+	cout << "Generating template file: " << out_fil << endl;
+
+	CMooxygenOptions dummy;
+	if (dummy.saveTemplateFile(out_fil))
+		cout << "Generation OK." << endl;
+}
 
