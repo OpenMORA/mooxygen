@@ -172,6 +172,12 @@ namespace mooxygen
 
 	std::string fileNameStripInvalidChars( const std::string &filename);
 
+	string validTextHTML(const string &str); //! Remove invalid chars, eg. "<" -> "&lt;"
+
+	string nowAsString();
+
+	void saveResourceToFile(const string &name, const string &trg_file); //! Raises an exception on errors
+
 	void  tokenize(
 		const std::string			&inString,
 		const std::string			&inDelimiters,

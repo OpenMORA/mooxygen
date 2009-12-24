@@ -30,6 +30,7 @@
 #include "moox_utils.h"
 #include <cstdarg>
 #include <cstring>
+#include <ctime>
 
 #ifdef IS_LINUX
 	#include <utime.h>
@@ -893,6 +894,36 @@ bool CompareCI(const string &a, const string &b)
 #endif
 }
 
+string nowAsString()
+{
+	time_t rawtime;
+	struct tm * timeinfo;
+	char buffer [100];
+
+	time ( &rawtime );
+	timeinfo = localtime ( &rawtime );
+	return string(asctime(timeinfo));
+}
+
+//! Remove invalid chars, eg. "<" -> "&lt;"
+string validTextHTML(const string &str)
+{
+	string r;
+	for (size_t i=0;i<str.size();i++)
+	{
+		switch (str[i])
+		{
+			case '<':	r+="&lt;"; break;
+			case '>':	r+="&gt;"; break;
+			case '&':	r+="&amp;"; break;
+			case '"':	r+="&quot;"; break;
+			case '\r':  break;
+			case '\n':	r+="<br>\n"; break;
+			default: r+=str[i]; break;
+		}
+	}
+	return r;
+}
 
 } // end namespace
 

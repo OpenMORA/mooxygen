@@ -33,9 +33,9 @@ CMooxygenOptions::CMooxygenOptions()
 {
 	// Init default values:
 	if (!m_defaults.empty()) return;
-	
+
 	m_defaults.clear();
-	m_defaults["PROJECT"]="";
+	m_defaults["PROJECT"]="YOUR PROJECT NAME HERE";
 
 	m_defaults["INPUT_PATH"]="./";
 
@@ -64,7 +64,7 @@ bool CMooxygenOptions::loadFromFile(const string &f) /// false on error
 		std::getline(fi,lin);
 		nLin++;
 
-		// Pre-Process line. 
+		// Pre-Process line.
 		// Remove comments:
 		size_t p = lin.find("//");
 		if (p!=string::npos)
@@ -72,7 +72,7 @@ bool CMooxygenOptions::loadFromFile(const string &f) /// false on error
 		lin = trim(lin);
 
 		if (lin.empty()) continue;
-		
+
 		// Process line:
 		p = lin.find("=");
 		if (p==string::npos)
@@ -89,7 +89,7 @@ bool CMooxygenOptions::loadFromFile(const string &f) /// false on error
 		}
 		m_data[key]=val;
 	}
-	
+
 	return true;
 }
 
@@ -102,7 +102,7 @@ string CMooxygenOptions::get(const string &f) const /// Empty if not found
 	it = m_defaults.find(f);
 	if (it!=m_defaults.end())
 		return it->second;
-		
+
 	return string(); // Not found.
 }
 
@@ -128,6 +128,6 @@ bool CMooxygenOptions::saveTemplateFile(const string &f) const /// false on erro
 
 	for( Str2StrMap::const_iterator it=m_defaults.begin();it!=m_defaults.end();++it)
 		fo << rightPad(it->first,20) << " = " << it->second << endl;
-	
+
 	return true;
 }

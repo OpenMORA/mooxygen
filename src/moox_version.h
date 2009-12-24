@@ -24,78 +24,10 @@
    |                                                                           |
    +---------------------------------------------------------------------------+ */
 
-#ifndef moox_app_H
-#define moox_app_H
+#ifndef moox_version_H
+#define moox_version_H
 
-#include "CMooxygenOptions.h"
+#define MOOXYGEN_VERSION "1.0.0"
 
-#include <list>
-
-namespace mooxygen
-{
-	using namespace std;
-
-	/// All the information gathered by Dooxygen about one project.
-	struct TApplication
-	{
-		// Options ---------------------------
-		CMooxygenOptions  opts;
-
-		// Data ------------------------------
-		typedef list<TFileInfo> TSourcesList;
-
-		TSourcesList lstSourceFiles;
-		set<string> lstDirectories;
-
-		struct TModuleInfo
-		{
-			vector<TFileInfo>	files;
-			string			short_desc;
-			list<string>	desc;
-			string			URL;   //!< "module_<SANITAZED_NAME>.html"
-
-			StrSet			publishes;  // Var names
-			StrSet			subscribes; // Var names
-
-			string getDesc() const;
-		};
-		struct TVariableInfo
-		{
-			string			short_desc;
-			list<string>	desc;
-			string			URL;    //!< "module_<SANITAZED_NAME>.html"
-			string getDesc() const;
-		};
-
-		typedef map<string,TModuleInfo,ci_less> TModList;
-		typedef map<string,TVariableInfo,ci_less> TVarList;
-
-		TModList mods;
-		TVarList vars;
-
-
-		// Methods ---------------------------
-		bool scanForSourceFiles();  /// return false on error
-		bool parseSourceFiles();    /// return false on error
-		bool generateOutputs();    /// return false on error
-
-	private:
-		string	m_root_path;
-		bool parseOneSourceFile( const TSourcesList::value_type fil );
-		string getRelativePath(const string &f);
-
-		void processCommentBlocks(const TSourcesList::value_type fil, const list<list<string> > &lins );
-		bool generateOutput_HTML();    /// return false on error
-		void updateAllURLs();
-		string generateHTMLTableOfModules(const string &mod=string());
-		string generateHTMLTableOfVariables(const string &var=string());
-		string generateGraphHTML_PNG(
-			const string &only_mod,
-			const string &only_var,
-			const string &GRAPH_NAME);
-
-		static string generateTabsHTML(const vector<pair<string,string> > &tabs, size_t active_idx);
-	};
-}
 #endif
 
