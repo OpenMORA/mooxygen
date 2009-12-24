@@ -52,6 +52,7 @@ namespace mooxygen
 			vector<TFileInfo>	files;
 			string			short_desc;
 			list<string>	desc;
+			string			URL;   //!< "module_<SANITAZED_NAME>.html"
 
 			StrSet			publishes;  // Var names
 			StrSet			subscribes; // Var names
@@ -60,6 +61,7 @@ namespace mooxygen
 		{
 			string			short_desc;
 			list<string>	desc;
+			string			URL;    //!< "module_<SANITAZED_NAME>.html"
 		};
 
 		typedef map<string,TModuleInfo,ci_less> TModList;
@@ -81,6 +83,11 @@ namespace mooxygen
 
 		void processCommentBlocks(const TSourcesList::value_type fil, const list<list<string> > &lins );
 		bool generateOutput_HTML();    /// return false on error
+		void updateAllURLs();
+		string generateGraphHTML_PNG(
+			const string &only_mod,
+			const string &only_var,
+			const string &GRAPH_NAME);
 
 	};
 }

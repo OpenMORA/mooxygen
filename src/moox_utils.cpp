@@ -27,6 +27,7 @@
 
 #define _CRT_SECURE_NO_DEPRECATE 1
 #include "moox_utils.h"
+#include <cstdarg>
 
 #ifdef IS_LINUX
 	#include <utime.h>
@@ -798,8 +799,6 @@ void  tokenize(
 	};
 }
 
-#include <cstdarg>
-
 int my_vsnprintf(char *buf, size_t bufSize, const char *format, va_list args)
 {
 #if defined(_MSC_VER)
@@ -854,6 +853,35 @@ string readTextFile(const string &filename)
 	return buf;	
 }
 
+/*---------------------------------------------------------------
+			fileNameStripInvalidChars
+---------------------------------------------------------------*/
+std::string fileNameStripInvalidChars( const std::string &filename)
+{
+	string	ret(filename);
+	for (string::iterator c=ret.begin();c!=ret.end();++c)
+	{
+		if (!isalnum(*c) &&
+			*c !='.' &&
+			*c !='-' &&
+			*c !='#' &&
+			*c !='%' &&
+			*c !='$' &&
+			*c !='&' &&
+			*c !='+' &&
+			*c !='(' && *c !=')' &&
+			*c !='[' && *c !=']' &&
+			*c !='{' && *c !='{' )
+				*c = '_';
+	}
+	return ret;
+}
+
+
+bool CompareCI(const string &a, const string &b)
+{
+	return !strcmpi(a.c_str(),b.c_str());
+}
 
 
 } // end namespace

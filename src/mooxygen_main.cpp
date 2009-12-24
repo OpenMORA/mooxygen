@@ -103,7 +103,7 @@ int main(int argc, char**argv)
 		cout << "Mooxygen is done." << endl;
 		return 0;
 	} catch (exception &e) {
-		cerr << "Program finished due to error: " << e.what() << endl;
+		cerr << e.what() << endl;
 		return -1;
 	}
 }

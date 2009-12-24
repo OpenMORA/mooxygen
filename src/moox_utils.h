@@ -13,7 +13,7 @@
    |     it under the terms of the GNU General Public License as published by  |
    |     the Free Software Foundation, either version 3 of the License, or     |
    |     (at your option) any later version.                                   |
-   |                                                                           |
+   |           |
    |   Mooxygen is distributed in the hope that it will be useful,             |
    |     but WITHOUT ANY WARRANTY; without even the implied warranty of        |
    |     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         |
@@ -38,6 +38,10 @@
 #endif
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable: 4996)  // POSIX names
+#endif
+
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
@@ -49,6 +53,7 @@
 #include <map>
 #include <functional>
 #include <algorithm>
+#include <stdexcept>
 
 #include <iostream>
 #include <fstream>
@@ -144,6 +149,8 @@ namespace mooxygen
 	typedef map<string,string,ci_less> Str2StrMap;
 	typedef set<string,ci_less> StrSet;
 
+	bool CompareCI(const string &a, const string &b);
+
 	/** Right pad with spaces */
 	std::string rightPad(const std::string &str, const size_t total_len);
 
@@ -161,6 +168,8 @@ namespace mooxygen
 	std::string  lowerCase(const std::string& str);
 
 	string readTextFile(const string &filename);
+
+	std::string fileNameStripInvalidChars( const std::string &filename);
 
 	void  tokenize(
 		const std::string			&inString,

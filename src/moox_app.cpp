@@ -336,7 +336,7 @@ void TApplication::processCommentBlocks(
 
 bool TApplication::generateOutputs()
 {
-	if ( !ci_less()(opts.get("OUT_HTML"),"YES") )
+	if ( CompareCI(opts.get("OUT_HTML"),"YES") )
 		if (!generateOutput_HTML())
 			return false;
 	return true;
