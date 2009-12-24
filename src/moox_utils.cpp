@@ -26,8 +26,10 @@
 
 
 #define _CRT_SECURE_NO_DEPRECATE 1
-#include "moox_utils.h"
+
+#include "moox_utils.h"
 #include <cstdarg>
+#include <cstring>
 
 #ifdef IS_LINUX
 	#include <utime.h>
@@ -191,7 +193,7 @@ bool copyFile( const std::string &org0, const std::string &trg0)
 				fclose(f_src);
 				return false;
 			}
-			
+
 			// Try again:
 			f_trg=fopen(trg.c_str(),"wb");
 			if (!f_trg)
@@ -313,7 +315,7 @@ bool copyFileAttributes(const string& org, const string &trg)
 	return true;
 #else
 	// Linux: Nothing to do!
-	return true; 
+	return true;
 #endif
 }
 
@@ -353,7 +355,7 @@ bool deleteFileOrDir( const std::string &filename, long *deleteCount )
 	{
 		// Runs recursively:
 		TDirListing		dirList;
-		if (!dirExplorer(filename,dirList)) 
+		if (!dirExplorer(filename,dirList))
 		{
 			SHOW_AND_LOG_ERROR2("ERROR: [deleteFile] Cannot list contents of directory: ",filename);
 			return false;
@@ -645,8 +647,8 @@ string formatTime( long secs)
 }
 
 // ---------------------------------------------------------------------
-// Creates a new directory (does not fail if if already exists) 
-//  In linux, the directory is created with RWX permisions for everyone 
+// Creates a new directory (does not fail if if already exists)
+//  In linux, the directory is created with RWX permisions for everyone
 //  Returns true on success, false on error.
 // ---------------------------------------------------------------------
 bool createDirectory( const std::string &path )
@@ -663,9 +665,9 @@ bool createDirectory( const std::string &path )
 }
 
 // ---------------------------------------------------------------------
-//  copyDirectory - Recursively copy files and directories 
-// 	   (the source & target MUST be directories - if target directory 
-// 	   does not exist it will be created) 
+//  copyDirectory - Recursively copy files and directories
+// 	   (the source & target MUST be directories - if target directory
+// 	   does not exist it will be created)
 //    This function preserves the original file timestamps
 //	Returns true on success, false on error.
 // ---------------------------------------------------------------------
@@ -815,7 +817,7 @@ int my_vsnprintf(char *buf, size_t bufSize, const char *format, va_list args)
 }
 
 
-string format(const char *fmt, ...)	//! A sprintf-like function for std::string 
+string format(const char *fmt, ...)	//! A sprintf-like function for std::string
 {
 	if (!fmt) return string("");
 
@@ -850,7 +852,7 @@ string readTextFile(const string &filename)
 		getline(fi,s);
 		buf+=s;
 	}
-	return buf;	
+	return buf;
 }
 
 /*---------------------------------------------------------------
@@ -880,7 +882,15 @@ std::string fileNameStripInvalidChars( const std::string &filename)
 
 bool CompareCI(const string &a, const string &b)
 {
-	return !strcmpi(a.c_str(),b.c_str());
+#ifdef IS_WINDOWS
+    #if defined(_MSC_VER) && (_MSC_VER>=1400)
+        return !::_strcmpi( a.c_str(),b.c_str() );
+    #else
+        return !::strcmpi( a.c_str(),b.c_str() );
+    #endif
+#else
+    return !::strcasecmp( a.c_str(),b.c_str() );
+#endif
 }
 
 

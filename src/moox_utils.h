@@ -45,6 +45,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
+#include <cstring>
 
 #include <string>
 #include <vector>
@@ -80,19 +81,19 @@ namespace mooxygen
 	  */
 	bool copyFileAttributes(const string& org, const string &trg);
 
-	string format(const char *fmt, ...);	//! A sprintf-like function for std::string 
+	string format(const char *fmt, ...);	//! A sprintf-like function for std::string
 
 	/** Returns true on success (retVal==0), false on error (retVal!=0).
 	  */
 	bool SHOW_ERROR_IF_ANY( int retVal );
 
 
-	/** copyFile - Copy a file to a target filename (the source & target MUST be filenames, not directories) 
+	/** copyFile - Copy a file to a target filename (the source & target MUST be filenames, not directories)
 	  *  This function preserves the original file timestamps - Returns true on success, false on error.
 	  */
 	bool copyFile( const std::string &org, const std::string &trg );
 
-	/** copyDirectory - Recursively copy files and directories (the source & target MUST be directories - if target directory does not exist it will be created) 
+	/** copyDirectory - Recursively copy files and directories (the source & target MUST be directories - if target directory does not exist it will be created)
 	  *  This function preserves the original file timestamps - Returns true on success, false on error.
 	  *  If "copyCount" is not NULL, its value will be INCREMENTED (initialize before calling!) by the number of copied files/directories.
 	  */

@@ -26,7 +26,9 @@
 
 #include "moox_app.h"
 
-#include <direct.h>
+#ifdef IS_WINDOWS
+	#include <direct.h>
+#endif
 
 using namespace std;
 using namespace mooxygen;
@@ -156,7 +158,7 @@ string TApplication::generateGraphHTML_PNG(
 	cout << "Generating graph "  << GRAPH_NAME << "..." << endl;
 
 	ofstream f("temp.dot");
-	if (!f.is_open()) 
+	if (!f.is_open())
 		throw runtime_error("Error: Cannot create temporary file for DOT");
 
 	f << "digraph " << GRAPH_NAME <<   " {" << endl;
@@ -189,7 +191,7 @@ string TApplication::generateGraphHTML_PNG(
 			myVars.insert(*p);
 		for (StrSet::const_iterator p=mods[only_mod].subscribes.begin();p!=mods[only_mod].subscribes.end();++p)
 			myVars.insert(*p);
-		
+
 		// Modules:
 		StrSet  myMods;
 
@@ -208,7 +210,7 @@ string TApplication::generateGraphHTML_PNG(
 				myMods.insert(i->first);
 
 				f << i->first << " [";
-				if (CompareCI(only_mod,i->first)) 
+				if (CompareCI(only_mod,i->first))
 						f << "penwidth=4, ";
 				else	f << "fillcolor=\"white\",";
 				f << "URL=\"" << i->second.URL <<   "\"];" << endl;
@@ -260,7 +262,7 @@ string TApplication::generateGraphHTML_PNG(
 					break;
 				}
 		}
-		
+
 		// Modules:
 		f << FORMAT_MODS << endl;
 		for (StrSet::iterator i=myNodes.begin();i!=myNodes.end();++i)
@@ -290,7 +292,7 @@ string TApplication::generateGraphHTML_PNG(
 
 	int ret = system(format("dot -Tpng -o %s temp.dot",png_fil.c_str()).c_str());
 	if (ret!=0) throw runtime_error("ERROR executing external tool DOT.");
-	  
+
 	ret = system(format("dot -Tcmapx -o %s temp.dot",map_fil.c_str()).c_str());
 	if (ret!=0) throw runtime_error("ERROR executing external tool DOT.");
 
