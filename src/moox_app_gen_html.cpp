@@ -80,7 +80,7 @@ bool TApplication::generateOutput_HTML()
 	tabs.push_back(make_pair<string,string>("Global overview","index.html"));
 	tabs.push_back(make_pair<string,string>("All modules","modules.html"));
 	tabs.push_back(make_pair<string,string>("All variables","variables.html"));
-	//tabs.push_back(make_pair<string,string>("Source files","files.html"));
+	tabs.push_back(make_pair<string,string>("All commands","commands.html"));
 
 	// Generate INDEX.HTML
 	// =======================================================
@@ -96,13 +96,8 @@ bool TApplication::generateOutput_HTML()
 		f << "<i>"<< PROJECT_NAME <<"</i>. Click on any module or variable in the graph to see more details.<br>\n";
 		f << "You can also use the tabs above to navigate among the documentation.\n";
 		f << "<br> <br>";
-		f << "<div align=\"center\"><b>GLOBAL VIEW:</b></div> <br>";
+		f << "<div align=\"center\"><b>GLOBAL VIEW (<small><b>modules:</b> Rectangles, <b>variables:</b> ellipses </small>):</b></div> <br>";
 		f << generateGraphHTML_PNG("","", "graph_global" ); // The global graph
-		f << "<br><br><br><div align=\"left\"><b>Legend:</b><br>\n";
-		f << "<ul>";
-		f << "<li><b>Modules:</b> Rectangles. </li>\n";
-		f << "<li><b>Variables:</b> Ellipses. </li>\n";
-		f << "</ul></div>\n";
 		f << html_tail;
 	}
 
@@ -131,11 +126,21 @@ bool TApplication::generateOutput_HTML()
 		f << "<br><center><h3> Module: ";
 		f << validTextHTML(i->first);
 		f << "</h3></center><br>\n";
+
 		f << "<u>Module info:</u><br>\n";
 		f << generateHTMLTableOfModules(i->first);
 		f << "<br>\n";
+
+		f << "<u>MOOS commands accepted by the module:</u><br><ul>\n";
+		if (i->second.commands.empty())
+			f << "<li>(None)</li>\n";
+		else for (StrSet::const_iterator c=i->second.commands.begin();c!=i->second.commands.end();++c)
+			f << "<li><a href=\""<< cmds[*c].URL <<"\" >" << validTextHTML(*c) << "</a></li>\n";
+		f << "</ul><br>\n";
+
 		f << "<u>Module graph:</u><br>\n";
 		f << generateGraphHTML_PNG(i->first,"", fileNameStripInvalidChars(i->first) );
+
 		f << "<br><u>Detailed description:</u><br>\n";
 		f << validTextHTML(i->second.getDesc());
 		f << html_tail;
@@ -167,15 +172,68 @@ bool TApplication::generateOutput_HTML()
 		f << "<br><center><h3> Variable: ";
 		f << validTextHTML(i->first);
 		f << "</h3></center><br>\n";
+
 		f << "<u>Variable info:</u><br>\n";
 		f << generateHTMLTableOfVariables(i->first);
 		f << "<br>\n";
+
 		f << "<u>Variable graph:</u><br>\n";
 		f << generateGraphHTML_PNG("",i->first, fileNameStripInvalidChars(i->first) );
+
 		f << "<br><u>Detailed description:</u><br>\n";
 		f << validTextHTML(i->second.getDesc());
 		f << html_tail;
 	}
+
+	// Generate commands.html
+	// =======================================================
+	{
+		ofstream f("commands.html");
+		if (!f.is_open()) throw runtime_error("Error: Cannot create output HTML file.");
+
+		f << html_head;
+		f << generateTabsHTML(tabs,3);
+		f << "<br> MOOS commands are those processed by <code>CMOOSApp::OnCommandMsg</code>.<br><br>\n";
+		f << "<br>List of all commands:<br>\n";
+		f << "<ul>\n";
+		for (TCmdList::const_iterator c=cmds.begin();c!=cmds.end();c++)
+		{
+			f << "<li> <a href=\"" << c->second.URL << "\" >" << validTextHTML(c->first) << "</a></li>\n";
+		}
+		f << "</ul>\n";
+		f << html_tail;
+	}
+
+	// Generate cmd_<NAME>.html
+	// =======================================================
+	for (TCmdList::iterator i=cmds.begin();i!=cmds.end();++i)
+	{
+		ofstream f(i->second.URL.c_str());
+		if (!f.is_open()) throw runtime_error("Error: Cannot create output HTML file.");
+
+		f << html_head;
+		f << generateTabsHTML(tabs,3);
+
+		f << "<br><center><h3> Command: ";
+		f << validTextHTML(i->first);
+		f << "</h3></center><br>\n";
+		f << "<br>List of modules that process this command:<br>\n";
+
+		f << "<ul>\n";
+		for (TCommandInfo::const_iterator c=i->second.begin();c!=i->second.end();++c)
+		{
+			f << "<li> <b><a href=\""<< mods[c->first].URL <<"\" >" << validTextHTML(c->first) << "</a></b>. Effects: ";
+			if (c->second.short_desc.empty())
+				f << "(not described)";
+			else f << validTextHTML(c->second.short_desc);
+			f  << "<br>";
+			std::copy(c->second.desc.begin(),c->second.desc.end(),ostream_iterator<string>(f,"\n"));
+			f << "</li>";
+		}
+		f << "</ul>\n";
+		f << html_tail;
+	}
+
 
 	return true;
 }
@@ -212,6 +270,25 @@ void TApplication::updateAllURLs()
 		for (;;)
 		{
 			nam = string("var_")+good_name;
+			if (n>0) nam += format("%i",n);
+			n++;
+			if (allURLs.find(nam)==allURLs.end())
+			{
+				allURLs.insert(nam);
+				break;
+			}
+		}
+		i->second.URL = nam + string(".html");
+	}
+
+	for (TCmdList::iterator i=cmds.begin();i!=cmds.end();++i)
+	{
+		int n=0;
+		const string good_name = fileNameStripInvalidChars( i->first );
+		string nam;
+		for (;;)
+		{
+			nam = string("cmd_")+good_name;
 			if (n>0) nam += format("%i",n);
 			n++;
 			if (allURLs.find(nam)==allURLs.end())
@@ -432,7 +509,7 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 			ret+="</small> </a></td>\n";
 
 			// Short desc:
-			ret+=" <td align=\"center\"> <small>";
+			ret+=" <td align=\"left\"> <small>";
 			if (i->second.short_desc.empty())
 					ret+="(no description)";
 			else	ret+=validTextHTML(i->second.short_desc);
@@ -491,7 +568,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 			ret+="</small> </a></td>\n";
 
 			// Short desc:
-			ret+=" <td align=\"center\"> <small>";
+			ret+=" <td align=\"left\"> <small>";
 			if (i->second.short_desc.empty())
 					ret+="(no description)";
 			else	ret+=validTextHTML(i->second.short_desc);
@@ -532,10 +609,7 @@ string TApplication::TModuleInfo::getDesc() const
 	if (desc.empty()) return "(no description)";
 	string s;
 	for (list<string>::const_iterator i=desc.begin();i!=desc.end();++i)
-	{
 		s+=*i;
-		s+="<br>\n";
-	}
 	return s;
 }
 

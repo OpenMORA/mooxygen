@@ -56,6 +56,7 @@ namespace mooxygen
 
 			StrSet			publishes;  // Var names
 			StrSet			subscribes; // Var names
+			StrSet			commands;   // Names of accepted commands
 
 			string getDesc() const;
 		};
@@ -66,12 +67,23 @@ namespace mooxygen
 			string			URL;    //!< "module_<SANITAZED_NAME>.html"
 			string getDesc() const;
 		};
+		struct TCommandInfoPerModule
+		{
+			string 			short_desc;
+			list<string>	desc;
+		};
+		struct TCommandInfo : public map<string,TCommandInfoPerModule,ci_less>
+		{
+			string URL;
+		};
 
-		typedef map<string,TModuleInfo,ci_less> TModList;
-		typedef map<string,TVariableInfo,ci_less> TVarList;
+		typedef map<string,TModuleInfo,ci_less> 	TModList;
+		typedef map<string,TVariableInfo,ci_less> 	TVarList;
+		typedef map<string,TCommandInfo,ci_less> 	TCmdList; //! cmd name -> info for each module
 
 		TModList mods;
 		TVarList vars;
+		TCmdList cmds;
 
 
 		// Methods ---------------------------

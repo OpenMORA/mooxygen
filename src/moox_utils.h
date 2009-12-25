@@ -56,6 +56,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include <iterator>
 #include <iostream>
 #include <fstream>
 

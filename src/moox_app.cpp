@@ -32,7 +32,7 @@ using namespace mooxygen;
 
 
 bool recursiveDirExplorer(
-	const string dir, 
+	const string dir,
 	set<string> &lstDirs,
 	TApplication::TSourcesList &lstFiles )
 {
@@ -84,7 +84,7 @@ bool recursiveDirExplorer(
 bool TApplication::scanForSourceFiles()
 {
 	m_root_path = convertBackslashes( trim(opts.get("INPUT_PATH")) );
-	
+
 	if (!pathExists(m_root_path))
 	{
 		cerr << "Project root path does not exist: " << m_root_path << endl;
@@ -187,7 +187,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 					if (!s.empty())
 						comment_block.push_back(s);
 
-					do_process_block = true; 
+					do_process_block = true;
 					in_comment_block = false;
 					in_comment = false;
 				}
@@ -203,7 +203,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 					}
 				}
 			}
-			else 
+			else
 			{
 				// End of a sequence of comment lines?
 				if (lin.find("///")==string::npos &&
@@ -245,16 +245,16 @@ string TApplication::getRelativePath(const string &f)
 {
 	size_t p = f.find(m_root_path);
 	if (p!=0) return f; // shouldn't ???
-	
+
 	return f.substr(m_root_path.size()+1);
 }
 
 
 void TApplication::processCommentBlocks(
-	const TSourcesList::value_type fil, 
+	const TSourcesList::value_type fil,
 	const list<list<string> > &lins )
 {
-	// Try to determine the name of the module from 
+	// Try to determine the name of the module from
 	//  1) The command "@moos_module_name", or
 	//  2) The last part of the path
 	// --------------------------------------------------------
@@ -279,6 +279,8 @@ void TApplication::processCommentBlocks(
 	for (list<list<string> >::const_iterator i=lins.begin();i!=lins.end();++i)
 	{
 		const list<string> &lins = *i;
+		list<string> *waitingLongDesc = NULL;
+
 		for (list<string>::const_iterator l=lins.begin();l!=lins.end();++l)
 		{
 			const string &s = *l;
@@ -288,11 +290,14 @@ void TApplication::processCommentBlocks(
 			{
 				anyCommand=true;
 
+				waitingLongDesc = NULL;
 			}
 			else if ((p=lowerCase(s).find("@moos_module"))!=string::npos)
 			{
 				anyCommand=true;
-
+				string rest = trim(s.substr(p+strlen("@moos_module")));
+				mods[mod_name].short_desc = rest;
+				waitingLongDesc = &mods[mod_name].desc;
 			}
 			else if ((p=lowerCase(s).find("@moos_subscribe"))!=string::npos)
 			{
@@ -307,6 +312,7 @@ void TApplication::processCommentBlocks(
 					vars[*v];	// Already known vars?
 					mods[mod_name].subscribes.insert(*v);	// Add dependencies:
 				}
+				waitingLongDesc = NULL;
 			}
 			else if ((p=lowerCase(s).find("@moos_publish"))!=string::npos)
 			{
@@ -322,10 +328,45 @@ void TApplication::processCommentBlocks(
 				vars[varNam]; // Add to list.
 				mods[mod_name].publishes.insert(varNam);	// Add publishes
 
-				if (p!=string::npos) // There is a short desc:				
+				if (p!=string::npos) // There is a short desc:
 					vars[varNam].short_desc = trim( rest.substr(p) );
+				// Long desc?
+				waitingLongDesc = &vars[varNam].desc;
 			}
-			
+			else if ((p=lowerCase(s).find("@moos_cmd"))!=string::npos)
+			{
+				anyCommand=true;
+
+				string rest = trim(s.substr(p+strlen("@moos_cmd")));
+				size_t p=rest.find_first_of(" \t");
+				string cmdNam;
+				if (p==string::npos && p>0)
+					 cmdNam = rest;
+				else cmdNam = rest.substr(0,p);
+
+				cmds[cmdNam]; // Add to list.
+				cmds[cmdNam][mod_name];
+
+				mods[mod_name].commands.insert(cmdNam);	// Add accepted commands
+
+				if (p!=string::npos) // There is a short desc:
+					cmds[cmdNam][mod_name].short_desc = trim( rest.substr(p) );
+				// Long desc?
+				waitingLongDesc = &cmds[cmdNam][mod_name].desc;
+			}
+			else if ((p=lowerCase(s).find("@moos"))==string::npos)
+			{
+				// This is a comment line WITHOUT a @moos tag.
+				// If we are expecting a long description from a previous tag,
+				//  go store it:
+				if  (waitingLongDesc)
+				{
+					string lin = trim(s);
+					if (lin.empty())
+						lin = "\n";
+					waitingLongDesc->push_back(lin);
+				}
+			}
 		} // end for "l"
 	} // end for "i"
 
