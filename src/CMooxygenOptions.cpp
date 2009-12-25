@@ -65,9 +65,9 @@ bool CMooxygenOptions::loadFromFile(const string &f) /// false on error
 		nLin++;
 
 		// Pre-Process line.
-		// Remove comments:
+		// Remove comments "//", except when they're part of an URI
 		size_t p = lin.find("//");
-		if (p!=string::npos)
+		if (p!=string::npos && (p==0 || lin[p-1]!=':' ) )
 			lin=lin.substr(0,p);
 		lin = trim(lin);
 

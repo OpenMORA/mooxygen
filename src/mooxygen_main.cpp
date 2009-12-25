@@ -68,7 +68,7 @@ int main(int argc, char**argv)
             1. Load config
 		 ****************************/
 		TApplication  project;
-		
+
 		if (!project.opts.loadFromFile(mooxyfilename))
 			return -1;
 
@@ -76,7 +76,7 @@ int main(int argc, char**argv)
             2. Get list of files
 		 ****************************/
 		cout << "Scanning for source files..." << endl;
-		if (!project.scanForSourceFiles()) 
+		if (!project.scanForSourceFiles())
 			return -1;
 
 		cout << project.lstSourceFiles.size() << " source files found." << endl;
@@ -85,7 +85,7 @@ int main(int argc, char**argv)
             3. Analize source code
 		 ****************************/
 		cout << "Analyzing source files..." << endl;
-		if (!project.parseSourceFiles()) 
+		if (!project.parseSourceFiles())
 			return -1;
 
 		cout << endl << "Found: "<< project.mods.size() << " modules and " << project.vars.size() << " variables." << endl;
@@ -94,9 +94,9 @@ int main(int argc, char**argv)
 		/****************************
             4. Generate outputs
 		 ****************************/
-		if (!project.generateOutputs()) 
+		if (!project.generateOutputs())
 			return -1;
-	
+
 
 
 		// All done!

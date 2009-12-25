@@ -925,6 +925,41 @@ string validTextHTML(const string &str)
 	return r;
 }
 
+string replaceInString(
+	const string &text,
+	const string &oldSubStr,
+	const string &newSubStr)
+{
+	string r;
+	const size_t N = text.size();
+	const size_t O = oldSubStr.size();
+
+	if(!N || !O) return text;
+
+	for (size_t i=0;i<N;i++)
+	{
+		const size_t remain = N-i-1;
+		if (remain>=O)
+		{
+			bool matches=true;
+			for (size_t j=0;j<O;j++)
+				if (oldSubStr[j]!=text[i+j])
+				{
+					matches=false;
+					break;
+				}
+			if (matches)
+			{
+				r+=newSubStr;
+				i+=O-1;
+				continue;
+			}
+		}
+		r.push_back(text[i]);
+	}
+	return r;
+}
+
 } // end namespace
 
 

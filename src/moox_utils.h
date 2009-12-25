@@ -176,6 +176,11 @@ namespace mooxygen
 
 	string nowAsString();
 
+	string replaceInString(
+		const string &text,
+		const string &oldSubStr,
+		const string &newSubStr);
+
 	void saveResourceToFile(const string &name, const string &trg_file); //! Raises an exception on errors
 
 	void  tokenize(
