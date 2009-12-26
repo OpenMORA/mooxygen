@@ -279,7 +279,7 @@ void TApplication::processCommentBlocks(
 	for (list<list<string> >::const_iterator i=lins.begin();i!=lins.end();++i)
 	{
 		const list<string> &lins = *i;
-		list<string> *waitingLongDesc = NULL;
+		string 	*waitingLongDesc = NULL;
 
 		for (list<string>::const_iterator l=lins.begin();l!=lins.end();++l)
 		{
@@ -354,6 +354,30 @@ void TApplication::processCommentBlocks(
 				// Long desc?
 				waitingLongDesc = &cmds[cmdNam][mod_name].desc;
 			}
+			else if ((p=lowerCase(s).find("@moos_param"))!=string::npos)
+			{
+				anyCommand=true;
+
+				string rest = trim(s.substr(p+strlen("@moos_param")));
+				size_t p=rest.find_first_of(" \t");
+				string parNam;
+				if (p==string::npos && p>0)
+				{
+					 parNam = rest;
+					 rest.clear();
+				}
+				else
+				{
+					parNam = rest.substr(0,p);
+					rest = trim(rest.substr(p));
+				}
+
+				mods[mod_name].params[parNam];  // Add accepted params
+
+				mods[mod_name].params[parNam] = rest;
+				// Long desc?
+				waitingLongDesc = &mods[mod_name].params[parNam];
+			}
 			else if ((p=lowerCase(s).find("@moos"))==string::npos)
 			{
 				// This is a comment line WITHOUT a @moos tag.
@@ -364,7 +388,7 @@ void TApplication::processCommentBlocks(
 					string lin = trim(s);
 					if (lin.empty())
 						lin = "\n";
-					waitingLongDesc->push_back(lin);
+					(*waitingLongDesc)+=lin;
 				}
 			}
 		} // end for "l"

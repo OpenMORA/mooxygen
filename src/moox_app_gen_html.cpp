@@ -138,11 +138,20 @@ bool TApplication::generateOutput_HTML()
 			f << "<li><a href=\""<< cmds[*c].URL <<"\" >" << validTextHTML(*c) << "</a></li>\n";
 		f << "</ul><br>\n";
 
-		f << "<u>Module graph:</u><br>\n";
-		f << generateGraphHTML_PNG(i->first,"", fileNameStripInvalidChars(i->first) );
+		f << "<u>Parameters accepted in the MOOS mission file:</u><br>\n";
+		f << "<ul>\n";
+		for (map<string,string>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
+			f << "<li> <b>" << validTextHTML(p->first) << ":</b> "
+			  << validTextHTML(p->second) << "</li>\n";
+		f << "</ul>\n";
 
 		f << "<br><u>Detailed description:</u><br>\n";
 		f << validTextHTML(i->second.getDesc());
+		f << "<br><br>";
+
+		f << "<u>Module graph:</u><br>\n";
+		f << generateGraphHTML_PNG(i->first,"", fileNameStripInvalidChars(i->first) );
+
 		f << html_tail;
 	}
 
@@ -226,8 +235,8 @@ bool TApplication::generateOutput_HTML()
 			if (c->second.short_desc.empty())
 				f << "(not described)";
 			else f << validTextHTML(c->second.short_desc);
-			f  << "<br>";
-			std::copy(c->second.desc.begin(),c->second.desc.end(),ostream_iterator<string>(f,"\n"));
+			f << "<br>";
+			f << c->second.desc << "\n";
 			f << "</li>";
 		}
 		f << "</ul>\n";
@@ -607,20 +616,11 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 string TApplication::TModuleInfo::getDesc() const
 {
 	if (desc.empty()) return "(no description)";
-	string s;
-	for (list<string>::const_iterator i=desc.begin();i!=desc.end();++i)
-		s+=*i;
-	return s;
+	return desc;
 }
 
 string TApplication::TVariableInfo::getDesc() const
 {
 	if (desc.empty()) return "(no description)";
-	string s;
-	for (list<string>::const_iterator i=desc.begin();i!=desc.end();++i)
-	{
-		s+=*i;
-		s+="<br>\n";
-	}
-	return s;
+	return desc;
 }

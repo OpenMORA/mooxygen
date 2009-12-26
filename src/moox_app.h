@@ -50,27 +50,28 @@ namespace mooxygen
 		struct TModuleInfo
 		{
 			vector<TFileInfo>	files;
-			string			short_desc;
-			list<string>	desc;
-			string			URL;   //!< "module_<SANITAZED_NAME>.html"
+			string	short_desc;
+			string	desc;
+			string	URL;   //!< "module_<SANITAZED_NAME>.html"
 
-			StrSet			publishes;  // Var names
-			StrSet			subscribes; // Var names
-			StrSet			commands;   // Names of accepted commands
+			StrSet	publishes;  // Var names
+			StrSet	subscribes; // Var names
+			StrSet	commands;   // Names of accepted commands
+			map<string,string>  params; // mission file parameters: name -> description
 
 			string getDesc() const;
 		};
 		struct TVariableInfo
 		{
-			string			short_desc;
-			list<string>	desc;
-			string			URL;    //!< "module_<SANITAZED_NAME>.html"
+			string	short_desc;
+			string	desc;
+			string	URL;    //!< "module_<SANITAZED_NAME>.html"
 			string getDesc() const;
 		};
 		struct TCommandInfoPerModule
 		{
-			string 			short_desc;
-			list<string>	desc;
+			string 	short_desc;
+			string	desc;
 		};
 		struct TCommandInfo : public map<string,TCommandInfoPerModule,ci_less>
 		{
