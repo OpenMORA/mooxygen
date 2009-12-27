@@ -316,8 +316,8 @@ string TApplication::generateGraphHTML_PNG(
 	const string &only_var,
 	const string &GRAPH_NAME)
 {
-	static const string FORMAT_MODS = " node [shape=box,style=filled, fillcolor=yellow,fontsize=10];";
-	static const string FORMAT_VARS = " node [shape=ellipse,style=filled, fillcolor=red,fontsize=8];";
+	static const string FORMAT_MODS = " node [shape=box,style=filled, fillcolor=\"#B0B0B0\",fontsize=10];";
+	static const string FORMAT_VARS = " node [shape=ellipse,style=filled, fillcolor=\"#EEEEEE\",fontsize=8];";
 
 	cout << "Generating graph "  << GRAPH_NAME << "..." << endl;
 
