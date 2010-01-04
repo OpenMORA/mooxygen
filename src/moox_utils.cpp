@@ -898,7 +898,6 @@ string nowAsString()
 {
 	time_t rawtime;
 	struct tm * timeinfo;
-	char buffer [100];
 
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );

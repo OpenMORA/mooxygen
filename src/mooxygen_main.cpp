@@ -26,12 +26,18 @@
 
 #include "moox_app.h"
 
+#ifdef _WIN32
+#include <windows.h> // For Sleep
+#endif
+
+
 using namespace std;
 using namespace mooxygen;
 
 // ------------------------------------------------------
 void createTemplateFile();
 void showUsage(const char *cmdLine);
+int returnError();
 
 // ------------------------------------------------------
 //                        MAIN
@@ -45,7 +51,7 @@ int main(int argc, char**argv)
 		if (argc>2)
 		{
 			showUsage(argv[0]);
-			return -1;
+			return returnError();
 		}
 
 		if (argc==2 && argv[1][0]=='-')
@@ -57,7 +63,7 @@ int main(int argc, char**argv)
 			}
 			cerr << "ERROR: Unknown command: " << argv[1] << endl;
 			showUsage(argv[0]);
-			return -1;
+			return returnError();
 		}
 
 		string  mooxyfilename = "./Mooxyfile";
@@ -70,14 +76,14 @@ int main(int argc, char**argv)
 		TApplication  project;
 
 		if (!project.opts.loadFromFile(mooxyfilename))
-			return -1;
+			return returnError();
 
 		/****************************
             2. Get list of files
 		 ****************************/
 		cout << "Scanning for source files..." << endl;
 		if (!project.scanForSourceFiles())
-			return -1;
+			return returnError();
 
 		cout << project.lstSourceFiles.size() << " source files found." << endl;
 
@@ -86,7 +92,7 @@ int main(int argc, char**argv)
 		 ****************************/
 		cout << "Analyzing source files..." << endl;
 		if (!project.parseSourceFiles())
-			return -1;
+			return returnError();
 
 		cout << endl <<	"Found: "
 		<< project.mods.size() << " modules, "
@@ -97,7 +103,7 @@ int main(int argc, char**argv)
             4. Generate outputs
 		 ****************************/
 		if (!project.generateOutputs())
-			return -1;
+			return returnError();
 
 
 
@@ -106,7 +112,7 @@ int main(int argc, char**argv)
 		return 0;
 	} catch (exception &e) {
 		cerr << e.what() << endl;
-		return -1;
+		return returnError();
 	}
 }
 
@@ -145,3 +151,14 @@ void createTemplateFile()
 		cout << "Generation OK." << endl;
 }
 
+// ------------------------------------------------------
+// ------------------------------------------------------
+int returnError()
+{
+	// If anyone tries to open Mooxygen out of a console in Windows, he/she 
+	//  will have no time to see the error messages:
+#ifdef _WIN32 
+			Sleep(600);
+#endif
+	return -1;
+}
