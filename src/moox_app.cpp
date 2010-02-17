@@ -119,6 +119,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 	bool in_comment_block=false; // We should wait for "*/"
 	list<string>        comment_block;
 	list<list<string> > comment_blocks;
+	list<string>		autodetectedPublishVars;
 
 	size_t  nLin=0;
 	while (!fi.fail() && !fi.eof())
@@ -167,6 +168,52 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 					in_comment=true;
 					comment_block.clear();
 					comment_block.push_back( s );
+				}
+			}
+
+			// Also, try to autodetect common MOOS C++ code:
+			//   m_Comms.Notify("VAR_NAME"
+			//
+			if (string::npos!= (p=upperCase(lin).find("M_COMMS.NOTIFY(")))
+			{
+				// After the ["M_COMMS.NOTIFY("] there must be a '"', a string, a '"', then ',', ignoring whitespaces.
+				size_t p2=p+strlen("M_COMMS.NOTIFY(");
+				bool ok=false;
+				while (p2<lin.size())
+				{
+					if (lin[p2]=='\"') {ok=true; break;}
+					if (lin[p2]!=' ' && lin[p2]!='\t') break;
+					p2++;
+				}
+				if (ok)
+				{
+					const size_t idx_start = p2;
+					p2++;
+					ok=false;
+					while (p2<lin.size())
+					{
+						if (lin[p2]=='\"') {ok=true; break;}
+						p2++;
+					}
+					if (ok)
+					{
+						const size_t idx_end = p2;
+
+						// Final check: next must come a ",":
+						p2++;
+						ok=false;
+						while (p2<lin.size())
+						{
+							if (lin[p2]==',') {ok=true; break;}
+							if (lin[p2]!=' ' && lin[p2]!='\t') break;
+							p2++;
+						}
+						if (ok)
+						{
+							const std::string varNam = upperCase( lin.substr(idx_start,idx_end-idx_start+1) );
+							autodetectedPublishVars.push_back(varNam);
+						}
+					}
 				}
 			}
 		}
@@ -235,7 +282,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 	}
 
 	// Process all now in a row:
-	processCommentBlocks(fil, comment_blocks);
+	processCommentBlocks(fil, comment_blocks,autodetectedPublishVars);
 
 	cout << "OK" << endl;
 	return true;
@@ -252,7 +299,8 @@ string TApplication::getRelativePath(const string &f)
 
 void TApplication::processCommentBlocks(
 	const TSourcesList::value_type fil,
-	const list<list<string> > &lins )
+	const list<list<string> > &lins,
+	const list<string> &autodetectedPublishVars )
 {
 	// Try to determine the name of the module from
 	//  1) The command "@moos_module_name", or
@@ -393,6 +441,15 @@ void TApplication::processCommentBlocks(
 			}
 		} // end for "l"
 	} // end for "i"
+
+
+	// autodetectedPublishVars:
+	for (list<string>::const_iterator it=autodetectedPublishVars.begin();it!=autodetectedPublishVars.end();++it)
+	{
+		vars[*it]; // Add to list.
+		mods[mod_name].publishes.insert(*it);	// Add publishes
+	}
+
 
 	if (anyCommand)
 		mods[mod_name].files.push_back(fil);

@@ -97,7 +97,7 @@ namespace mooxygen
 		bool parseOneSourceFile( const TSourcesList::value_type fil );
 		string getRelativePath(const string &f);
 
-		void processCommentBlocks(const TSourcesList::value_type fil, const list<list<string> > &lins );
+		void processCommentBlocks(const TSourcesList::value_type fil, const list<list<string> > &lins, const list<string> &autodetectedPublishVars );
 		bool generateOutput_HTML();    /// return false on error
 		void updateAllURLs();
 		string generateHTMLTableOfModules(const string &mod=string());
