@@ -155,9 +155,9 @@ void createTemplateFile()
 // ------------------------------------------------------
 int returnError()
 {
-	// If anyone tries to open Mooxygen out of a console in Windows, he/she 
+	// If anyone tries to open Mooxygen out of a console in Windows, he/she
 	//  will have no time to see the error messages:
-#ifdef _WIN32 
+#ifdef _WIN32
 			Sleep(600);
 #endif
 	return -1;

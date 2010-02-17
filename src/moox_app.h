@@ -57,7 +57,7 @@ namespace mooxygen
 			StrSet	publishes;  // Var names
 			StrSet	subscribes; // Var names
 			StrSet	commands;   // Names of accepted commands
-			map<string,string>  params; // mission file parameters: name -> description
+			map<string,string,ci_less>  params; // mission file parameters: name -> description
 
 			string getDesc() const;
 		};
@@ -78,9 +78,9 @@ namespace mooxygen
 			string URL;
 		};
 
-		typedef map<string,TModuleInfo,ci_less> 	TModList;
-		typedef map<string,TVariableInfo,ci_less> 	TVarList;
-		typedef map<string,TCommandInfo,ci_less> 	TCmdList; //! cmd name -> info for each module
+		typedef Str2ValueCIMap<TModuleInfo> 	TModList;
+		typedef Str2ValueCIMap<TVariableInfo> 	TVarList;
+		typedef Str2ValueCIMap<TCommandInfo> 	TCmdList; //! cmd name -> info for each module
 
 		TModList mods;
 		TVarList vars;

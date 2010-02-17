@@ -148,10 +148,47 @@ namespace mooxygen
 		}
 	}; // end of ci_less
 
-	typedef map<string,string,ci_less> Str2StrMap;
-	typedef set<string,ci_less> StrSet;
 
 	bool CompareCI(const string &a, const string &b);
+
+
+	template <class VALUE>
+	class Str2ValueCIMap: public map<string,VALUE,ci_less>
+	{
+		typedef map<string,VALUE,ci_less> BASE;
+		public:
+		/** Get stored version of a string, which may differ in case */
+		string getStored(const string &val) const
+		{
+			typename BASE::const_iterator i=BASE::find(val);
+			if (i==BASE::end()) throw std::runtime_error("val is not in Str2ValueCIMap");
+			return i->first;
+		}
+
+	};
+
+	typedef Str2ValueCIMap<string> Str2StrMap;
+
+	class StrSet : public set<string,ci_less>
+	{
+	public:
+		/** Get stored version of a string, which may differ in case */
+		string getStored(const string &val) const
+		{
+			set<string,ci_less>::const_iterator i=set<string,ci_less>::find(val);
+			if (i==set<string,ci_less>::end()) throw std::runtime_error("val is not in StrSet");
+			return *i;
+		}
+
+		size_t count(const string& val) const
+		{
+			size_t ret=0;
+			for (set<string,ci_less>::const_iterator i=set<string,ci_less>::begin();i!=set<string,ci_less>::end();++i)
+				if (CompareCI(*i,val))
+					ret++;
+			return ret;
+		}
+	};
 
 	/** Right pad with spaces */
 	std::string rightPad(const std::string &str, const size_t total_len);

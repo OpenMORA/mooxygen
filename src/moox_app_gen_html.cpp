@@ -507,7 +507,7 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 
 	for (TModList::iterator i=mods.begin();i!=mods.end();++i)
 	{
-		if (mod.empty() || i->first==mod)
+		if (mod.empty() || CompareCI(i->first,mod))
 		{
 			ret+="<tr>\n";
 			ret+=" <td align=\"center\"> ";
@@ -566,7 +566,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 
 	for (TVarList::iterator i=vars.begin();i!=vars.end();++i)
 	{
-		if (var.empty() || i->first==var)
+		if (var.empty() || CompareCI(i->first,var))
 		{
 			ret+="<tr>\n";
 			ret+=" <td align=\"center\"> ";
@@ -588,7 +588,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 			ret+=" <td align=\"center\"> <small>";
 			for (TModList::const_iterator m=mods.begin();m!=mods.end();++m)
 				for (StrSet::const_iterator s=m->second.publishes.begin();s!=m->second.publishes.end();++s)
-					if (*s==i->first)
+					if (CompareCI(*s,i->first))
 						modsPub.insert(m->first);
 			for (StrSet::const_iterator s=modsPub.begin();s!=modsPub.end();++s)
 				ret+= "<a href=\""+ mods[*s].URL +"\" >" + validTextHTML(*s) + "</a> ";
@@ -599,7 +599,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 			ret+=" <td align=\"center\"> <small>";
 			for (TModList::const_iterator m=mods.begin();m!=mods.end();++m)
 				for (StrSet::const_iterator s=m->second.subscribes.begin();s!=m->second.subscribes.end();++s)
-					if (*s==i->first)
+					if (CompareCI(*s,i->first))
 						modsSub.insert(m->first);
 			for (StrSet::const_iterator s=modsSub.begin();s!=modsSub.end();++s)
 				ret+= "<a href=\""+ mods[*s].URL +"\" >" + validTextHTML(*s) + "</a> ";

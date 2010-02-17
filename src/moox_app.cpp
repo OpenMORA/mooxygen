@@ -187,7 +187,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 				}
 				if (ok)
 				{
-					const size_t idx_start = p2;
+					const size_t idx_start = p2+1;
 					p2++;
 					ok=false;
 					while (p2<lin.size())
@@ -195,9 +195,9 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 						if (lin[p2]=='\"') {ok=true; break;}
 						p2++;
 					}
-					if (ok)
+					if (ok && p2>(idx_start+1))
 					{
-						const size_t idx_end = p2;
+						const size_t idx_end = p2-1;
 
 						// Final check: next must come a ",":
 						p2++;
@@ -358,7 +358,7 @@ void TApplication::processCommentBlocks(
 				for (vector<string>::const_iterator v=lstVars.begin();v!=lstVars.end();++v)
 				{
 					vars[*v];	// Already known vars?
-					mods[mod_name].subscribes.insert(*v);	// Add dependencies:
+					mods[mod_name].subscribes.insert(vars.getStored(*v));	// Add dependencies:
 				}
 				waitingLongDesc = NULL;
 			}
@@ -374,12 +374,12 @@ void TApplication::processCommentBlocks(
 				else varNam = rest.substr(0,p);
 
 				vars[varNam]; // Add to list.
-				mods[mod_name].publishes.insert(varNam);	// Add publishes
+				mods[mod_name].publishes.insert(vars.getStored(varNam));	// Add publishes
 
 				if (p!=string::npos) // There is a short desc:
-					vars[varNam].short_desc = trim( rest.substr(p) );
+					vars[vars.getStored(varNam)].short_desc = trim( rest.substr(p) );
 				// Long desc?
-				waitingLongDesc = &vars[varNam].desc;
+				waitingLongDesc = &vars[vars.getStored(varNam)].desc;
 			}
 			else if ((p=lowerCase(s).find("@moos_cmd"))!=string::npos)
 			{
@@ -442,12 +442,11 @@ void TApplication::processCommentBlocks(
 		} // end for "l"
 	} // end for "i"
 
-
 	// autodetectedPublishVars:
 	for (list<string>::const_iterator it=autodetectedPublishVars.begin();it!=autodetectedPublishVars.end();++it)
 	{
 		vars[*it]; // Add to list.
-		mods[mod_name].publishes.insert(*it);	// Add publishes
+		mods[mod_name].publishes.insert(vars.getStored(*it));	// Add publishes
 	}
 
 
