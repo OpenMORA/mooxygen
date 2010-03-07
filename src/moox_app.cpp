@@ -362,6 +362,24 @@ void TApplication::processCommentBlocks(
 				}
 				waitingLongDesc = NULL;
 			}
+			else if ((p=lowerCase(s).find("@moos_var"))!=string::npos)
+			{
+				anyCommand=true;
+
+				string rest = trim(s.substr(p+strlen("@moos_var")));
+				size_t p=rest.find_first_of(" \t");
+				string varNam;
+				if (p==string::npos && p>0)
+					 varNam = rest;
+				else varNam = rest.substr(0,p);
+
+				vars[varNam]; // Add to list.
+
+				if (p!=string::npos) // There is a short desc:
+					vars[vars.getStored(varNam)].short_desc = trim( rest.substr(p) );
+				// Long desc?
+				waitingLongDesc = &vars[vars.getStored(varNam)].desc;
+			}
 			else if ((p=lowerCase(s).find("@moos_publish"))!=string::npos)
 			{
 				anyCommand=true;

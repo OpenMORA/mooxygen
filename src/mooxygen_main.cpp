@@ -39,6 +39,8 @@ void createTemplateFile();
 void showUsage(const char *cmdLine);
 int returnError();
 
+extern bool htmlValidTag(const std::string &s, std::string &r, size_t &i);
+
 // ------------------------------------------------------
 //                        MAIN
 // ------------------------------------------------------

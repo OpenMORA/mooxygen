@@ -615,12 +615,14 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 
 string TApplication::TModuleInfo::getDesc() const
 {
-	if (desc.empty()) return "(no description)";
-	return desc;
+	return short_desc + desc;
+//	if (desc.empty()) return "(no description)";
+//	return desc;
 }
 
 string TApplication::TVariableInfo::getDesc() const
 {
-	if (desc.empty()) return "(no description)";
-	return desc;
+	return short_desc + desc;
+//	if (desc.empty()) return "(no description)";
+//	return desc;
 }

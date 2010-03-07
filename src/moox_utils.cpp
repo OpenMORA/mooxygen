@@ -904,7 +904,46 @@ string nowAsString()
 	return string(asctime(timeinfo));
 }
 
+// Advance "i" if s[i] is the beginning of a valid HTML tag
+//  Used in validTextHTML
+bool htmlValidTag(const std::string &s, std::string &r, size_t &i)
+{
+	#define CHECK_HTML_TAG(_TAG_) \
+		if (CompareCI(_TAG_,s.substr(i,strlen(_TAG_)))) \
+		{ \
+			i+=strlen(_TAG_)-1; r+= std::string(_TAG_); return true; \
+		} else
+
+	// TODO: Allow tags with arguments, eg: <table ....>
+	CHECK_HTML_TAG("<br>")
+	CHECK_HTML_TAG("<br/>")
+
+	CHECK_HTML_TAG("<li>")
+	CHECK_HTML_TAG("</li>")
+	CHECK_HTML_TAG("<ul>")
+	CHECK_HTML_TAG("</ul>")
+	CHECK_HTML_TAG("<ol>")
+	CHECK_HTML_TAG("</ol>")
+
+	CHECK_HTML_TAG("<b>")
+	CHECK_HTML_TAG("</b>")
+	CHECK_HTML_TAG("<i>")
+	CHECK_HTML_TAG("</i>")
+	CHECK_HTML_TAG("<u>")
+	CHECK_HTML_TAG("</u>")
+
+	CHECK_HTML_TAG("<table>")
+	CHECK_HTML_TAG("</table>")
+	CHECK_HTML_TAG("<tr>")
+	CHECK_HTML_TAG("</tr>")
+	CHECK_HTML_TAG("<td>")
+	CHECK_HTML_TAG("</td>")
+
+	return false;
+}
+
 //! Remove invalid chars, eg. "<" -> "&lt;"
+//!  some allowed tags are not removed.
 string validTextHTML(const string &str)
 {
 	string r;
@@ -912,7 +951,13 @@ string validTextHTML(const string &str)
 	{
 		switch (str[i])
 		{
-			case '<':	r+="&lt;"; break;
+			case '<':
+				{	// If "<" is the starting of an allowed HTML tag, don't convert it into &lt;
+					// and move the counter "i" forward:
+					if (!htmlValidTag(str,r,i))
+						r+="&lt;";
+				}
+				break;
 			case '>':	r+="&gt;"; break;
 			case '&':	r+="&amp;"; break;
 			case '"':	r+="&quot;"; break;
