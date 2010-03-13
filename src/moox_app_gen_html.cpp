@@ -91,7 +91,9 @@ bool TApplication::generateOutput_HTML()
 		f << html_head;
 		f << generateTabsHTML(tabs,0);
 		f << "<br>\n";
-		f << "<center><h3>"<< PROJECT_NAME <<"</h3></center><br><br>\n";
+		f << "<center><h3>"<< PROJECT_NAME <<"</h3></center>\n";
+		f << opts.get("HTML_MAINPAGE_EXTRA_CODE");
+		f << "<br><br>\n";
 		f << "This is the overview of all the <a href=\"" MOOS_URL "\" >MOOS</a> modules and variables for the project ";
 		f << "<i>"<< PROJECT_NAME <<"</i>. Click on any module or variable in the graph to see more details.<br>\n";
 		f << "You can also use the tabs above to navigate among the documentation.\n";
@@ -140,7 +142,7 @@ bool TApplication::generateOutput_HTML()
 
 		f << "<u>Parameters accepted in the MOOS mission file:</u><br>\n";
 		f << "<ul>\n";
-		for (map<string,string>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
+		for (map<string,string,ci_less>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
 			f << "<li> <b>" << validTextHTML(p->first) << ":</b> "
 			  << validTextHTML(p->second) << "</li>\n";
 		f << "</ul>\n";

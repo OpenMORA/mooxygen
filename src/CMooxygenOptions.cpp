@@ -43,6 +43,10 @@ CMooxygenOptions::CMooxygenOptions()
 	m_defaults["OUT_HTML_PATH"]="./html";
 
 	m_defaults["DOT_PATH"]="dot";
+
+	m_defaults["HTML_HEAD_EXTRA_CODE"]="";
+	m_defaults["HTML_TAIL_EXTRA_CODE"]="";
+	m_defaults["HTML_MAINPAGE_EXTRA_CODE"]="";
 }
 
 bool CMooxygenOptions::loadFromFile(const string &f) /// false on error

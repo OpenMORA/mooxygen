@@ -9,7 +9,8 @@ Changelog for the Mooxygen project:
     those cases.
   - BUGFIX: Errors due to mixed line-feeds (\r, \n,...).
   - BUGFIX: Wrong processing of /** */ blocks when they only span to one single line.
-
+  - New optional project parameter: HTML_MAINPAGE_EXTRA_CODE
+  
 * Mooxygen 1.0.0 - Released 4/Jan/2010. 
   - Initial release.
 
