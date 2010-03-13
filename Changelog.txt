@@ -7,6 +7,8 @@ Changelog for the Mooxygen project:
   - Automatic detection of 'm_comms.Notify("VAR_NAME",' as a publication of the
     given variable by the module, so it's not needed to add a @moos_publish in
     those cases.
+  - BUGFIX: Errors due to mixed line-feeds (\r, \n,...).
+  - BUGFIX: Wrong processing of /** */ blocks when they only span to one single line.
 
 * Mooxygen 1.0.0 - Released 4/Jan/2010. 
   - Initial release.

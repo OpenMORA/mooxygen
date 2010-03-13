@@ -217,7 +217,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 				}
 			}
 		}
-		else
+
 		{
 			// We were in a comment block ... Is it ended now?
 			if (in_comment_block)
@@ -357,8 +357,12 @@ void TApplication::processCommentBlocks(
 
 				for (vector<string>::const_iterator v=lstVars.begin();v!=lstVars.end();++v)
 				{
-					vars[*v];	// Already known vars?
-					mods[mod_name].subscribes.insert(vars.getStored(*v));	// Add dependencies:
+					string varNam = trim(*v);
+					if (!varNam.empty())
+					{
+						vars[varNam]; // Already known vars?
+						mods[mod_name].subscribes.insert(vars.getStored(varNam));	// Add dependencies:
+					}
 				}
 				waitingLongDesc = NULL;
 			}
@@ -372,6 +376,9 @@ void TApplication::processCommentBlocks(
 				if (p==string::npos && p>0)
 					 varNam = rest;
 				else varNam = rest.substr(0,p);
+
+				if (varNam.empty())
+					throw std::runtime_error(format("@moos_var: Variable name empty, in line:\n%s",s.c_str()));
 
 				vars[varNam]; // Add to list.
 
@@ -390,6 +397,9 @@ void TApplication::processCommentBlocks(
 				if (p==string::npos && p>0)
 					 varNam = rest;
 				else varNam = rest.substr(0,p);
+
+				if (varNam.empty())
+					throw std::runtime_error(format("@moos_publish: Variable name empty, in line:\n%s",s.c_str()));
 
 				vars[varNam]; // Add to list.
 				mods[mod_name].publishes.insert(vars.getStored(varNam));	// Add publishes
@@ -463,8 +473,12 @@ void TApplication::processCommentBlocks(
 	// autodetectedPublishVars:
 	for (list<string>::const_iterator it=autodetectedPublishVars.begin();it!=autodetectedPublishVars.end();++it)
 	{
-		vars[*it]; // Add to list.
-		mods[mod_name].publishes.insert(vars.getStored(*it));	// Add publishes
+		string varNam = trim(*it);
+		if (!varNam.empty())
+		{
+			vars[varNam];// Add to list.
+			mods[mod_name].publishes.insert(vars.getStored(varNam));	// Add publishes
+		}
 	}
 
 

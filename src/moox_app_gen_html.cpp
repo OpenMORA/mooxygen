@@ -327,6 +327,9 @@ string TApplication::generateGraphHTML_PNG(
 
 	f << "digraph " << GRAPH_NAME <<   " {" << endl;
 
+	// Maximum size of the graph:
+	//f << " size=\"12,40\";" << endl;
+
 	if (only_mod.empty() && only_var.empty())
 	{
 		// Modules: --------------------

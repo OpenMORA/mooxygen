@@ -732,8 +732,8 @@ std::string trim(const std::string &str)
 	}
 	else
 	{
-		size_t s = str.find_first_not_of(" \t");
-		size_t e = str.find_last_not_of(" \t");
+		size_t s = str.find_first_not_of(" \t\n\r");
+		size_t e = str.find_last_not_of(" \t\n\r");
 		if (s==std::string::npos || e==std::string::npos)
 				return std::string();
 		else	return str.substr( s, e-s+1);
