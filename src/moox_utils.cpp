@@ -904,40 +904,69 @@ string nowAsString()
 	return string(asctime(timeinfo));
 }
 
+
+// List of permited HTML tags in the comments. Used in htmlValidTag
+const char *valid_html_tags_no_args[] = {
+	"<br>","<br/>",
+	"<hr>","<hr/>",
+	"<li>","</li>",
+	"<ul>","</ul>",
+	"<ol>","</ol>",
+	"<b>","</b>",
+	"<i>","</i>",
+	"<u>","</u>",
+	"<table>","</table>",
+	"<tr>","</tr>",
+	"<td>","</td>",
+	"<pre>","</pre>",
+	"<code>","</code>",
+
+	// endings of 1-argument HTML tags:
+	"</img>","</a>"
+	};
+
+// List of permited HTML tags in the comments. Used in htmlValidTag
+const char *valid_html_tags_1_arg[] = {
+	"<img ",
+	"<a "
+	};
+
 // Advance "i" if s[i] is the beginning of a valid HTML tag
 //  Used in validTextHTML
 bool htmlValidTag(const std::string &s, std::string &r, size_t &i)
 {
-	#define CHECK_HTML_TAG(_TAG_) \
-		if (CompareCI(_TAG_,s.substr(i,strlen(_TAG_)))) \
-		{ \
-			i+=strlen(_TAG_)-1; r+= std::string(_TAG_); return true; \
-		} else
+	// HTML tags without arguments:
+	// -------------------------------
+	static const size_t nTags0 = sizeof(valid_html_tags_no_args)/sizeof(valid_html_tags_no_args[0]);
+	for (size_t k=0;k<nTags0;k++)
+	{
+		if (CompareCI(valid_html_tags_no_args[k],s.substr(i,strlen(valid_html_tags_no_args[k]))))
+		{
+			i+=strlen(valid_html_tags_no_args[k])-1; 
+			r+= std::string(valid_html_tags_no_args[k]); 
+			return true; 
+		}
+	}
 
-	// TODO: Allow tags with arguments, eg: <table ....>
-	CHECK_HTML_TAG("<br>")
-	CHECK_HTML_TAG("<br/>")
-
-	CHECK_HTML_TAG("<li>")
-	CHECK_HTML_TAG("</li>")
-	CHECK_HTML_TAG("<ul>")
-	CHECK_HTML_TAG("</ul>")
-	CHECK_HTML_TAG("<ol>")
-	CHECK_HTML_TAG("</ol>")
-
-	CHECK_HTML_TAG("<b>")
-	CHECK_HTML_TAG("</b>")
-	CHECK_HTML_TAG("<i>")
-	CHECK_HTML_TAG("</i>")
-	CHECK_HTML_TAG("<u>")
-	CHECK_HTML_TAG("</u>")
-
-	CHECK_HTML_TAG("<table>")
-	CHECK_HTML_TAG("</table>")
-	CHECK_HTML_TAG("<tr>")
-	CHECK_HTML_TAG("</tr>")
-	CHECK_HTML_TAG("<td>")
-	CHECK_HTML_TAG("</td>")
+	// HTML tags with 1 argument:
+	// -------------------------------
+	static const size_t nTags1 = sizeof(valid_html_tags_1_arg)/sizeof(valid_html_tags_1_arg[0]);
+	for (size_t k=0;k<nTags1;k++)
+	{
+		if (CompareCI(valid_html_tags_1_arg[k],s.substr(i,strlen(valid_html_tags_1_arg[k]))))
+		{
+			// We have a match with the START of the TAG. 
+			// Now, look for the TAG closing ">"
+			size_t p = s.find(">",i+strlen(valid_html_tags_1_arg[k])-1);
+			if (p!=std::string::npos)
+			{
+				cout << "AAA: " << s.substr(i,p-i+1) << endl;
+				r+= s.substr(i,p-i+1);
+				i = p+1;
+				return true; 
+			}
+		}
+	}
 
 	return false;
 }

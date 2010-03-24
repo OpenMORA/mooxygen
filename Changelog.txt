@@ -3,6 +3,7 @@ Changelog for the Mooxygen project:
 
 
 * Mooxygen 1.1.0 - (Under development)
+  - Comments can now contain a rich subset of HTML tags to format the documentation.
   - Added support for command @moos_var 
   - Automatic detection of 'm_comms.Notify("VAR_NAME",' as a publication of the
     given variable by the module, so it's not needed to add a @moos_publish in
