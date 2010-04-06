@@ -142,7 +142,9 @@ bool TApplication::generateOutput_HTML()
 
 		f << "<u>Parameters accepted in the MOOS mission file:</u><br>\n";
 		f << "<ul>\n";
-		for (map<string,string,ci_less>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
+		if (i->second.params.empty())
+			f << "<li>(None)</li>\n";
+		else for (map<string,string,ci_less>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
 			f << "<li> <b>" << validTextHTML(p->first) << ":</b> "
 			  << validTextHTML(p->second) << "</li>\n";
 		f << "</ul>\n";
