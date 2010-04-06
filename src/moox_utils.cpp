@@ -942,9 +942,9 @@ bool htmlValidTag(const std::string &s, std::string &r, size_t &i)
 	{
 		if (CompareCI(valid_html_tags_no_args[k],s.substr(i,strlen(valid_html_tags_no_args[k]))))
 		{
-			i+=strlen(valid_html_tags_no_args[k])-1; 
-			r+= std::string(valid_html_tags_no_args[k]); 
-			return true; 
+			i+=strlen(valid_html_tags_no_args[k])-1;
+			r+= std::string(valid_html_tags_no_args[k]);
+			return true;
 		}
 	}
 
@@ -955,15 +955,14 @@ bool htmlValidTag(const std::string &s, std::string &r, size_t &i)
 	{
 		if (CompareCI(valid_html_tags_1_arg[k],s.substr(i,strlen(valid_html_tags_1_arg[k]))))
 		{
-			// We have a match with the START of the TAG. 
+			// We have a match with the START of the TAG.
 			// Now, look for the TAG closing ">"
 			size_t p = s.find(">",i+strlen(valid_html_tags_1_arg[k])-1);
 			if (p!=std::string::npos)
 			{
-				cout << "AAA: " << s.substr(i,p-i+1) << endl;
 				r+= s.substr(i,p-i+1);
 				i = p+1;
-				return true; 
+				return true;
 			}
 		}
 	}
