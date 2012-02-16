@@ -53,6 +53,8 @@ namespace mooxygen
 			string	short_desc;
 			string	desc;
 			string	URL;   //!< "module_<SANITAZED_NAME>.html"
+			string	TODO;
+			string	changeLog;
 
 			StrSet	publishes;  // Var names
 			StrSet	subscribes; // Var names
@@ -60,6 +62,8 @@ namespace mooxygen
 			map<string,string,ci_less>  params; // mission file parameters: name -> description
 
 			string getDesc() const;
+			string getTODO() const;
+			string getChangeLog() const;
 		};
 		struct TVariableInfo
 		{

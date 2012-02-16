@@ -347,6 +347,20 @@ void TApplication::processCommentBlocks(
 				mods[mod_name].short_desc = rest;
 				waitingLongDesc = &mods[mod_name].desc;
 			}
+			else if ((p=lowerCase(s).find("@moos_todo"))!=string::npos)
+			{
+				anyCommand=true;
+				string todo = trim(s.substr(p+strlen("@moos_todo")));
+				//mods[mod_name].TODO = todo;
+				waitingLongDesc = &mods[mod_name].TODO;
+			}
+			else if ((p=lowerCase(s).find("@moos_changelog"))!=string::npos)
+			{
+				anyCommand=true;
+				string changes = trim(s.substr(p+strlen("@moos_changelog")));
+				//mods[mod_name].changeLog = changes;
+				waitingLongDesc = &mods[mod_name].changeLog;
+			}
 			else if ((p=lowerCase(s).find("@moos_subscribe"))!=string::npos)
 			{
 				anyCommand=true;

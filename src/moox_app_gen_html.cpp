@@ -156,6 +156,20 @@ bool TApplication::generateOutput_HTML()
 		f << "<u>Module graph:</u><br>\n";
 		f << generateGraphHTML_PNG(i->first,"", fileNameStripInvalidChars(i->first) );
 
+		f << "<br><u>TODO list:</u><br>\n";
+		if ( i->second.TODO.empty() )
+			f << "(None)\n";
+		else
+			f << validTextHTML(i->second.getTODO());
+		f << "<br><br>";
+
+		f << "<br><u>Changes log:</u><br>\n";
+		if ( i->second.changeLog.empty() )
+			f << "(None)\n";
+		else		
+			f << validTextHTML(i->second.getChangeLog());
+		f << "<br><br>";
+
 		f << html_tail;
 	}
 
@@ -633,3 +647,14 @@ string TApplication::TVariableInfo::getDesc() const
 //	if (desc.empty()) return "(no description)";
 //	return desc;
 }
+
+string TApplication::TModuleInfo::getTODO() const
+{
+	return TODO;
+}
+
+string TApplication::TModuleInfo::getChangeLog() const
+{
+	return changeLog;
+}
+
