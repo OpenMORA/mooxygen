@@ -345,7 +345,7 @@ string TApplication::generateGraphHTML_PNG(
 	if (!f.is_open())
 		throw runtime_error("Error: Cannot create temporary file for DOT");
 
-	f << "digraph " << GRAPH_NAME <<   " {" << endl;
+	f << "digraph \"" << GRAPH_NAME <<   "\" {" << endl;
 
 	// Maximum size of the graph:
 	//f << " size=\"12,40\";" << endl;
@@ -363,11 +363,11 @@ string TApplication::generateGraphHTML_PNG(
 		// Publishes:
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
 			for (StrSet::const_iterator p=i->second.publishes.begin();p!=i->second.publishes.end();++p)
-				f << i->first << "->" << *p << ";" << endl;
+				f << "\"" << i->first << "\"->\"" << *p << "\";" << endl;
 		// Subscribes:
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
 			for (StrSet::const_iterator p=i->second.subscribes.begin();p!=i->second.subscribes.end();++p)
-				f << *p << "->" << i->first << ";" << endl;
+				f << "\"" <<*p << "\"->\"" << i->first << "\";" << endl;
 	}
 	else if (!only_mod.empty())
 	{
@@ -414,7 +414,7 @@ string TApplication::generateGraphHTML_PNG(
 			for (StrSet::const_iterator p=i->second.publishes.begin();p!=i->second.publishes.end();++p)
 				if (myMods.count(i->first) && myVars.count(*p))
 				{
-					f << i->first << "->" << *p;
+					f << "\"" <<i->first << "\"->\"" << *p << "\" ";
 					if (!CompareCI(i->first,only_mod))
 						f << "[style=dashed]";
 					f << ";" << endl;
@@ -424,7 +424,7 @@ string TApplication::generateGraphHTML_PNG(
 			for (StrSet::const_iterator p=i->second.subscribes.begin();p!=i->second.subscribes.end();++p)
 				if (myMods.count(i->first) && myVars.count(*p))
 				{
-					f << *p << "->" << i->first;
+					f << "\"" << *p << "\"->\"" << i->first << "\"";
 					if (!CompareCI(i->first,only_mod))
 						f << "[style=dashed]";
 					f << ";" << endl;
@@ -464,12 +464,12 @@ string TApplication::generateGraphHTML_PNG(
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
 			for (StrSet::const_iterator p=i->second.publishes.begin();p!=i->second.publishes.end();++p)
 				if (CompareCI(only_var, *p))
-					f << i->first << "->" << *p << ";" << endl;
+					f << "\"" << i->first << "\"->\"" << *p << "\";" << endl;
 		// Subscribes:
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
 			for (StrSet::const_iterator p=i->second.subscribes.begin();p!=i->second.subscribes.end();++p)
 				if (CompareCI(only_var, *p))
-					f << *p << "->" << i->first  << ";" << endl;
+					f << "\"" <<*p << "\"->\"" << i->first  << "\";" << endl;
 	}
 
 	f << "}" << endl;

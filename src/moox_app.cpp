@@ -393,7 +393,7 @@ void TApplication::processCommentBlocks(
 
 				if (varNam.empty())
 				{
-					std::cerr << format("@moos_var: Variable name empty, in line:\n%s",s.c_str()) << std::endl;
+					std::cerr << format("[%s] @moos_var: Variable name empty, in line:\n%s",fil.wholePath.c_str(),s.c_str()) << std::endl;
 					continue;
 				}
 
@@ -418,7 +418,7 @@ void TApplication::processCommentBlocks(
 
 				if (varNam.empty())
 				{
-					std::cerr << format("@moos_publish: Variable name empty, in line:\n%s",s.c_str()) << std::endl;
+					std::cerr << format("[%s] @moos_publish: Variable name empty, in line:\n%s",fil.wholePath.c_str(),s.c_str()) << std::endl;
 					continue;
 				}
 
@@ -511,13 +511,11 @@ bool TApplication::generateOutputs()
 {
 	if ( CompareCI(opts.get("OUT_HTML"),"YES") )
 	{
-		cout << "Generating HTML output...\n";
 		if (!generateOutput_HTML())
 		{
 			cerr << "*ERROR* generating HTML output...\n";
 			return false;
 		}
-		cout << "Generation of HTML output done.\n";
 	}
 	return true;
 }
