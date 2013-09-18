@@ -392,7 +392,11 @@ void TApplication::processCommentBlocks(
 				else varNam = rest.substr(0,p);
 
 				if (varNam.empty())
-					throw std::runtime_error(format("@moos_var: Variable name empty, in line:\n%s",s.c_str()));
+				{
+					std::cerr << format("@moos_var: Variable name empty, in line:\n%s",s.c_str()) << std::endl;
+					continue;
+				}
+
 
 				vars[varNam]; // Add to list.
 
@@ -413,7 +417,10 @@ void TApplication::processCommentBlocks(
 				else varNam = rest.substr(0,p);
 
 				if (varNam.empty())
-					throw std::runtime_error(format("@moos_publish: Variable name empty, in line:\n%s",s.c_str()));
+				{
+					std::cerr << format("@moos_publish: Variable name empty, in line:\n%s",s.c_str()) << std::endl;
+					continue;
+				}
 
 				vars[varNam]; // Add to list.
 				mods[mod_name].publishes.insert(vars.getStored(varNam));	// Add publishes
@@ -498,13 +505,19 @@ void TApplication::processCommentBlocks(
 
 	if (anyCommand)
 		mods[mod_name].files.push_back(fil);
-
 }
 
 bool TApplication::generateOutputs()
 {
 	if ( CompareCI(opts.get("OUT_HTML"),"YES") )
+	{
+		cout << "Generating HTML output...\n";
 		if (!generateOutput_HTML())
+		{
+			cerr << "*ERROR* generating HTML output...\n";
 			return false;
+		}
+		cout << "Generation of HTML output done.\n";
+	}
 	return true;
 }
