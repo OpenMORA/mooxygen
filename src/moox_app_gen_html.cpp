@@ -29,6 +29,8 @@
 
 #ifdef IS_WINDOWS
 	#include <direct.h>
+#else
+	#include <unistd.h>
 #endif
 
 using namespace std;
@@ -166,7 +168,7 @@ bool TApplication::generateOutput_HTML()
 		f << "<br><u>Changes log:</u><br>\n";
 		if ( i->second.changeLog.empty() )
 			f << "(None)\n";
-		else		
+		else
 			f << validTextHTML(i->second.getChangeLog());
 		f << "<br><br>";
 
