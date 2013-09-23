@@ -38,6 +38,7 @@ CMooxygenOptions::CMooxygenOptions()
 	m_defaults["PROJECT"]="YOUR PROJECT NAME HERE";
 
 	m_defaults["INPUT_PATH"]="./";
+	m_defaults["MISSIONS_PATH"]="./";
 
 	m_defaults["OUT_HTML"]="YES";
 	m_defaults["OUT_HTML_PATH"]="./html";

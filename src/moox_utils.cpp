@@ -786,10 +786,11 @@ char *my_strtok( char *str, const char *strDelimit, char **context )
 						tokenize
 ---------------------------------------------------------------*/
 void  tokenize(
-	const std::string			&inString,
+	const std::string			&inString2,
 	const std::string			&inDelimiters,
 	std::vector<std::string>	&outTokens )
 {
+    std::string  inString = inString2.substr(0); // TODO: Make a copy because it seems it's modified?!
 	char	*nextTok,*context;
 
 	outTokens.clear();

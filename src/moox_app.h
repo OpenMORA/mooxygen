@@ -44,8 +44,14 @@ namespace mooxygen
 		// Data ------------------------------
 		typedef list<TFileInfo> TSourcesList;
 
+        // Modules:
 		TSourcesList lstSourceFiles;
 		set<string> lstDirectories;
+
+        // Mission files:
+		TSourcesList lstMissionFiles;
+		set<string> lstMissionDirectories;
+
 
 		struct TModuleInfo
 		{
@@ -64,6 +70,13 @@ namespace mooxygen
 			string getDesc() const;
 			string getTODO() const;
 			string getChangeLog() const;
+		};
+		struct TMissionFileInfo
+		{
+			string	URL;   //!< "module_<SANITAZED_NAME>.html"
+			string  short_desc;
+		    StrSet  modules; //<! Modules that appear here.
+		    deque<string> contents; //!< HTML syntax-highlighted contents
 		};
 		struct TVariableInfo
 		{
@@ -85,27 +98,38 @@ namespace mooxygen
 		typedef Str2ValueCIMap<TModuleInfo> 	TModList;
 		typedef Str2ValueCIMap<TVariableInfo> 	TVarList;
 		typedef Str2ValueCIMap<TCommandInfo> 	TCmdList; //! cmd name -> info for each module
+		typedef std::map<std::string, TMissionFileInfo> TMissionList; //! cmd name -> info for each module
 
 		TModList mods;
 		TVarList vars;
 		TCmdList cmds;
+		TMissionList missions; //!< Keys are file paths
 
 
 		// Methods ---------------------------
 		bool scanForSourceFiles();  /// return false on error
 		bool parseSourceFiles();    /// return false on error
+
+		bool scanForMissionFiles();  /// return false on error
+		bool parseMissionFiles();    /// return false on error
+
 		bool generateOutputs();    /// return false on error
 
 	private:
 		string	m_root_path;
+		string	m_root_path_missions;
 		bool parseOneSourceFile( const TSourcesList::value_type fil );
-		string getRelativePath(const string &f);
+		bool parseOneMissionFile( const TSourcesList::value_type fil );
+		string getRelativePath(const string &f) const;
+		string getMissionRelativePath(const string &f) const;
 
 		void processCommentBlocks(const TSourcesList::value_type fil, const list<list<string> > &lins, const list<string> &autodetectedPublishVars );
 		bool generateOutput_HTML();    /// return false on error
 		void updateAllURLs();
 		string generateHTMLTableOfModules(const string &mod=string());
 		string generateHTMLTableOfVariables(const string &var=string());
+		string generateHTMLTableOfMissions(const string &var=string());
+
 		string generateGraphHTML_PNG(
 			const string &only_mod,
 			const string &only_var,

@@ -38,6 +38,20 @@ using namespace mooxygen;
 
 #define MOOS_URL "http://www.robots.ox.ac.uk/~mobile/MOOS/wiki/pmwiki.php"
 
+
+template <class CONTAINER>
+std::string safeHREF(
+    const CONTAINER &c,
+    const std::string &entry,
+    const std::string &text)
+{
+    std::string ret;
+    typename CONTAINER::const_iterator it=c.find(entry);
+    if (it!=c.end())
+            return "<a href=\""+ it->second.URL +"\" >" + text + "</a> ";
+    else    return  text;
+}
+
 bool TApplication::generateOutput_HTML()
 {
 	cout << "Generator for HTML..." << endl;
@@ -83,6 +97,7 @@ bool TApplication::generateOutput_HTML()
 	tabs.push_back(make_pair<string,string>("All modules","modules.html"));
 	tabs.push_back(make_pair<string,string>("All variables","variables.html"));
 	tabs.push_back(make_pair<string,string>("All commands","commands.html"));
+	tabs.push_back(make_pair<string,string>("Mission files","missions.html"));
 
 	// Generate INDEX.HTML
 	// =======================================================
@@ -174,6 +189,51 @@ bool TApplication::generateOutput_HTML()
 
 		f << html_tail;
 	}
+
+
+	// Generate MISSIONS.HTML
+	// =======================================================
+	{
+		ofstream f("missions.html");
+		if (!f.is_open()) throw runtime_error("Error: Cannot create output HTML file.");
+
+		f << html_head;
+		f << generateTabsHTML(tabs,4);
+		f << "<br>List of all mission files:<br>\n";
+		f << generateHTMLTableOfMissions();
+		f << html_tail;
+	}
+
+	// Generate mission_<NAME>.html
+	// =======================================================
+	for (TMissionList::iterator i=missions.begin();i!=missions.end();++i)
+	{
+		ofstream f(i->second.URL.c_str());
+		if (!f.is_open()) throw runtime_error("Error: Cannot create output HTML file.");
+
+		f << html_head;
+		f << generateTabsHTML(tabs,4);
+		f << "<br><center><h3> Mission file: ";
+		f << validTextHTML(i->first);
+		f << "</h3></center><br>\n";
+
+		f << generateHTMLTableOfMissions(i->first);
+		f << "<br>\n";
+
+		f << "<u>Mission modules graph:</u><br>\n";
+		//f << generateGraphHTML_PNG(i->first,"", fileNameStripInvalidChars(i->first) );
+
+		f << "<br>\n";
+		f << "<u>Raw file contents:</u><br><br>\n";
+		f << "<div style=\"border: 1px solid black; background: #e0e0e0; padding: 3px; font-size: 12px;font-family:'Courier';\">\n";
+        f << "<pre>";
+        for (size_t k=0;k<i->second.contents.size();k++)
+            f<< i->second.contents[k] << "\n";
+        f << "</pre></div>\n";
+
+		f << html_tail;
+	}
+
 
 	// Generate variables.html
 	// =======================================================
@@ -280,6 +340,25 @@ void TApplication::updateAllURLs()
 		for (;;)
 		{
 			nam = string("module_")+good_name;
+			if (n>0) nam += format("%i",n);
+			n++;
+			if (allURLs.find(nam)==allURLs.end())
+			{
+				allURLs.insert(nam);
+				break;
+			}
+		}
+		i->second.URL = nam + string(".html");
+	}
+
+	for (TMissionList::iterator i=missions.begin();i!=missions.end();++i)
+	{
+		int n=0;
+		const string good_name = fileNameStripInvalidChars( i->first );
+		string nam;
+		for (;;)
+		{
+			nam = string("mission_")+good_name;
 			if (n>0) nam += format("%i",n);
 			n++;
 			if (allURLs.find(nam)==allURLs.end())
@@ -553,7 +632,7 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 			{
 				if (s!=i->second.publishes.begin())
 					ret+=", ";
-				ret+= "<a href=\""+ vars[*s].URL +"\" >" + validTextHTML(*s) + "</a> ";
+				ret+= safeHREF(vars,*s,validTextHTML(*s));
 			}
 			ret+="</small> </td>\n";
 
@@ -563,7 +642,7 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 			{
 				if (s!=i->second.subscribes.begin())
 					ret+=", ";
-				ret+= "<a href=\""+ vars[*s].URL +"\" >" + validTextHTML(*s) + "</a> ";
+				ret+= safeHREF(vars,*s,validTextHTML(*s));
 			}
 			ret+="</small> </td>\n";
 
@@ -614,7 +693,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 					if (CompareCI(*s,i->first))
 						modsPub.insert(m->first);
 			for (StrSet::const_iterator s=modsPub.begin();s!=modsPub.end();++s)
-				ret+= "<a href=\""+ mods[*s].URL +"\" >" + validTextHTML(*s) + "</a> ";
+				ret+= safeHREF(mods,*s,validTextHTML(*s));
 			ret+="</small> </td>\n";
 
 			// subscribed to:
@@ -625,7 +704,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 					if (CompareCI(*s,i->first))
 						modsSub.insert(m->first);
 			for (StrSet::const_iterator s=modsSub.begin();s!=modsSub.end();++s)
-				ret+= "<a href=\""+ mods[*s].URL +"\" >" + validTextHTML(*s) + "</a> ";
+				ret+= safeHREF(mods,*s,validTextHTML(*s));
 			ret+="</small> </td>\n";
 
 			ret+="</tr>\n";
@@ -635,6 +714,56 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 
 	return ret;
 }
+
+
+string TApplication::generateHTMLTableOfMissions(const string &mission)
+{
+	string ret;
+
+	ret+="<br> <div align=\"center\" ><table class=\"mooxygen\" width=\"95%\" >\n";
+	ret+="<tr>\n";
+	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Mission file</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Short description</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Modules</b> </td>\n";
+	ret+="</tr>\n";
+
+	for (TMissionList::iterator i=missions.begin();i!=missions.end();++i)
+	{
+		if (mission.empty() || CompareCI(i->first,mission))
+		{
+			ret+="<tr>\n";
+			ret+=" <td align=\"left\"> ";
+			ret+="<a href=\"";
+			ret+=i->second.URL;
+			ret+="\" > <small>";
+			ret+=validTextHTML(i->first);
+			ret+="</small> </a></td>\n";
+
+			// Short desc:
+			ret+=" <td align=\"left\"> <small>";
+			if (i->second.short_desc.empty())
+					ret+="(no description)";
+			else	ret+=validTextHTML(i->second.short_desc);
+			ret+= "</small> </td>\n";
+
+			// modules:
+			ret+=" <td align=\"center\"> <small>";
+			for (StrSet::const_iterator s=i->second.modules.begin();s!=i->second.modules.end();++s)
+			{
+				if (s!=i->second.modules.begin())
+					ret+=", ";
+				ret+= safeHREF(mods,*s,validTextHTML(*s));
+			}
+			ret+="</small> </td>\n";
+
+			ret+="</tr>\n";
+		}
+	}
+	ret+="</table> </div>\n";
+
+	return ret;
+}
+
 
 string TApplication::TModuleInfo::getDesc() const
 {

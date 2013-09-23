@@ -96,13 +96,31 @@ int main(int argc, char**argv)
 		if (!project.parseSourceFiles())
 			return returnError();
 
+		/****************************
+            4. Get list of mission files
+		 ****************************/
+		cout << "Scanning for mission files..." << endl;
+		if (!project.scanForMissionFiles())
+			return returnError();
+
+		cout << project.lstMissionFiles.size() << " mission files found." << endl;
+
+		/****************************
+            5. Analize missions
+		 ****************************/
+		cout << "Analyzing mission files..." << endl;
+		if (!project.parseMissionFiles())
+			return returnError();
+
+
 		cout << endl <<	"Found: "
 		<< project.mods.size() << " modules, "
+		<< project.missions.size() << " missions, "
 		<< project.vars.size() << " variables and "
 		<< project.cmds.size() << " commands." << endl;
 
 		/****************************
-            4. Generate outputs
+            6. Generate outputs
 		 ****************************/
 		if (!project.generateOutputs())
 			return returnError();

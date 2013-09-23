@@ -34,18 +34,9 @@ using namespace mooxygen;
 bool recursiveDirExplorer(
 	const string dir,
 	set<string> &lstDirs,
-	TApplication::TSourcesList &lstFiles )
+	TApplication::TSourcesList &lstFiles,
+	const StrSet &validExts )
 {
-	static StrSet validExts;
-	if (validExts.empty())
-	{
-		validExts.insert("cpp");
-		validExts.insert("cxx");
-		validExts.insert("h");
-		validExts.insert("hpp");
-	}
-
-
 	TDirListing dirlist;
 	if (!mooxygen::dirExplorer(dir, dirlist))
 	{
@@ -60,7 +51,7 @@ bool recursiveDirExplorer(
 			if (it->name[0]!='.')
 			{
 				// Recursive:
-				if (!recursiveDirExplorer(it->wholePath,lstDirs,lstFiles)) return false;
+				if (!recursiveDirExplorer(it->wholePath,lstDirs,lstFiles,validExts)) return false;
 			}
 		}
 		else
@@ -91,7 +82,34 @@ bool TApplication::scanForSourceFiles()
 		return false;
 	}
 
-	return recursiveDirExplorer( m_root_path,lstDirectories,lstSourceFiles);
+    StrSet validExts;
+    validExts.insert("cpp");
+    validExts.insert("cxx");
+    validExts.insert("h");
+    validExts.insert("hpp");
+
+	return recursiveDirExplorer( m_root_path,lstDirectories,lstSourceFiles,validExts);
+}
+
+bool TApplication::scanForMissionFiles()
+{
+	m_root_path_missions = convertBackslashes( trim(opts.get("MISSIONS_PATH")) );
+
+    if (m_root_path_missions.empty())
+        return true; // None to explore.
+
+	if (!pathExists(m_root_path_missions))
+	{
+		cerr << "Mission path does not exist: " << m_root_path_missions << endl;
+		return false;
+	}
+
+    StrSet validExts;
+    validExts.insert("MOOS");
+    validExts.insert("moos");
+    validExts.insert("Moos");
+
+	return recursiveDirExplorer( m_root_path_missions,lstMissionDirectories,lstMissionFiles,validExts);
 }
 
 bool TApplication::parseSourceFiles()
@@ -288,13 +306,22 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 	return true;
 }
 
-string TApplication::getRelativePath(const string &f)
+string TApplication::getRelativePath(const string &f) const
 {
 	size_t p = f.find(m_root_path);
 	if (p!=0) return f; // shouldn't ???
 
 	return f.substr(m_root_path.size()+1);
 }
+
+string TApplication::getMissionRelativePath(const string &f) const
+{
+	size_t p = f.find(m_root_path_missions);
+	if (p!=0) return f; // shouldn't ???
+	return f.substr(m_root_path_missions.size()+1);
+}
+
+
 
 
 void TApplication::processCommentBlocks(
@@ -517,5 +544,90 @@ bool TApplication::generateOutputs()
 			return false;
 		}
 	}
+	return true;
+}
+
+bool TApplication::parseMissionFiles()
+{
+	for(TSourcesList::const_iterator i=lstMissionFiles.begin();i!=lstMissionFiles.end();++i)
+        if (!parseOneMissionFile(*i))
+            return false;
+
+	return true;
+}
+
+
+bool TApplication::parseOneMissionFile( const TSourcesList::value_type fil )
+{
+	const string relPath = getMissionRelativePath( fil.wholePath ) ;
+	cout << rightPad(string("Parsing ")+relPath,70);
+
+	ifstream fi;
+	fi.open(fil.wholePath.c_str());
+	if (!fi.is_open())
+	{
+		cerr << "ERROR" << endl << "  Cannot open the file" << endl;
+		return false;
+	}
+
+    TMissionFileInfo & mfi = missions[relPath];
+
+	size_t  nLin=0,p;
+	while (!fi.fail() && !fi.eof())
+	{
+		string lin;
+		std::getline(fi,lin);
+		nLin++;
+
+		mfi.contents.push_back(lin);
+
+		lin=trim(lin);
+
+		// Ignore commented out parts:
+        p=lin.find("//");
+        if (p!=string::npos)
+            lin = trim(lin.substr(0,p));
+        if (lin.empty()) continue;
+
+		// Look for Antler's "RUN" lines:
+		// example:
+		// 	Run = pGenericSensor       @	NewConsole=false ~ LASER_FRONT
+        vector<string> toks;
+        tokenize(lin,"\t =@",toks);
+        if (toks.size()<2 || !CompareCI(toks[0],"Run"))
+            continue;
+
+        // This IS a Run line:
+        // Get the entire right side:
+        p=lin.find("=");
+        if (p==string::npos) continue; // Shouldn't occur!
+        string run_rhs = trim(lin.substr(p+1));
+        if (run_rhs.empty()) continue; // Shouldn't
+
+        // Now we have RHS like:
+        // "pGenericSensor       @	NewConsole=false ~ LASER_FRONT"
+        tokenize(run_rhs,"\t @",toks);
+        if (toks.empty()) continue;
+
+        std::string sModName = trim(toks[0]);
+        // Naming conventions:
+        // If the name starts with "p" or "i" + a capitalized letter,
+        // remove that trailing letter:
+        if (sModName.size()>=2)
+        {
+            if ((sModName[0]=='i' || sModName[0]=='p') &&
+                (sModName[1]>='A' && sModName[1]<='Z') )
+                sModName = sModName.substr(1);
+        }
+
+        mfi.modules.insert(sModName);
+
+        if (toks.size()>1)
+        {
+            // Process "@" side:
+        }
+	}
+
+	cout << "OK" << endl;
 	return true;
 }
