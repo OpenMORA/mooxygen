@@ -973,8 +973,9 @@ bool htmlValidTag(const std::string &s, std::string &r, size_t &i)
 
 //! Remove invalid chars, eg. "<" -> "&lt;"
 //!  some allowed tags are not removed.
-string validTextHTML(const string &str)
+string validTextHTML(const string &str, bool allowSubSetHTMLtags)
 {
+
 	string r;
 	for (size_t i=0;i<str.size();i++)
 	{
@@ -983,8 +984,15 @@ string validTextHTML(const string &str)
 			case '<':
 				{	// If "<" is the starting of an allowed HTML tag, don't convert it into &lt;
 					// and move the counter "i" forward:
-					if (!htmlValidTag(str,r,i))
+					if (allowSubSetHTMLtags)
+					{
+						if (!htmlValidTag(str,r,i))
+							r+="&lt;";
+					}
+					else
+					{
 						r+="&lt;";
+					}
 				}
 				break;
 			case '>':	r+="&gt;"; break;

@@ -143,7 +143,7 @@ bool TApplication::generateOutput_HTML()
 		f << html_head;
 		f << generateTabsHTML(tabs,1);
 		f << "<br><center><h3> Module: ";
-		f << validTextHTML(i->first);
+		f << validTextHTML(i->first, false);
 		f << "</h3></center><br>\n";
 
 		f << "<u>Module info:</u><br>\n";
@@ -154,7 +154,7 @@ bool TApplication::generateOutput_HTML()
 		if (i->second.commands.empty())
 			f << "<li>(None)</li>\n";
 		else for (StrSet::const_iterator c=i->second.commands.begin();c!=i->second.commands.end();++c)
-			f << "<li><a href=\""<< cmds[*c].URL <<"\" >" << validTextHTML(*c) << "</a></li>\n";
+			f << "<li><a href=\""<< cmds[*c].URL <<"\" >" << validTextHTML(*c, false) << "</a></li>\n";
 		f << "</ul><br>\n";
 
 		f << "<u>Parameters accepted in the MOOS mission file:</u><br>\n";
@@ -162,12 +162,12 @@ bool TApplication::generateOutput_HTML()
 		if (i->second.params.empty())
 			f << "<li>(None)</li>\n";
 		else for (map<string,string,ci_less>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
-			f << "<li> <b>" << validTextHTML(p->first) << ":</b> "
-			  << validTextHTML(p->second) << "</li>\n";
+			f << "<li> <b>" << validTextHTML(p->first, false) << ":</b> "
+			  << validTextHTML(p->second, true) << "</li>\n";
 		f << "</ul>\n";
 
 		f << "<br><u>Detailed description:</u><br>\n";
-		f << validTextHTML(i->second.getDesc());
+		f << validTextHTML(i->second.getDesc(), true);
 		f << "<br><br>";
 
 		f << "<u>Module graph:</u><br>\n";
@@ -177,14 +177,14 @@ bool TApplication::generateOutput_HTML()
 		if ( i->second.TODO.empty() )
 			f << "(None)\n";
 		else
-			f << validTextHTML(i->second.getTODO());
+			f << validTextHTML(i->second.getTODO(), true);
 		f << "<br><br>";
 
 		f << "<br><u>Changes log:</u><br>\n";
 		if ( i->second.changeLog.empty() )
 			f << "(None)\n";
 		else
-			f << validTextHTML(i->second.getChangeLog());
+			f << validTextHTML(i->second.getChangeLog(), true);
 		f << "<br><br>";
 
 		f << html_tail;
@@ -214,7 +214,7 @@ bool TApplication::generateOutput_HTML()
 		f << html_head;
 		f << generateTabsHTML(tabs,4);
 		f << "<br><center><h3> Mission file: ";
-		f << validTextHTML(i->first);
+		f << validTextHTML(i->first,false);
 		f << "</h3></center><br>\n";
 
 		f << generateHTMLTableOfMissions(i->first);
@@ -259,7 +259,7 @@ bool TApplication::generateOutput_HTML()
 		f << generateTabsHTML(tabs,2);
 
 		f << "<br><center><h3> Variable: ";
-		f << validTextHTML(i->first);
+		f << validTextHTML(i->first,false);
 		f << "</h3></center><br>\n";
 
 		f << "<u>Variable info:</u><br>\n";
@@ -270,7 +270,7 @@ bool TApplication::generateOutput_HTML()
 		f << generateGraphHTML_PNG("",i->first, fileNameStripInvalidChars(i->first) );
 
 		f << "<br><u>Detailed description:</u><br>\n";
-		f << validTextHTML(i->second.getDesc());
+		f << validTextHTML(i->second.getDesc(),true);
 		f << html_tail;
 	}
 
@@ -287,7 +287,7 @@ bool TApplication::generateOutput_HTML()
 		f << "<ul>\n";
 		for (TCmdList::const_iterator c=cmds.begin();c!=cmds.end();c++)
 		{
-			f << "<li> <a href=\"" << c->second.URL << "\" >" << validTextHTML(c->first) << "</a></li>\n";
+			f << "<li> <a href=\"" << c->second.URL << "\" >" << validTextHTML(c->first,false) << "</a></li>\n";
 		}
 		f << "</ul>\n";
 		f << html_tail;
@@ -304,17 +304,17 @@ bool TApplication::generateOutput_HTML()
 		f << generateTabsHTML(tabs,3);
 
 		f << "<br><center><h3> Command: ";
-		f << validTextHTML(i->first);
+		f << validTextHTML(i->first,false);
 		f << "</h3></center><br>\n";
 		f << "<br>List of modules that process this command:<br>\n";
 
 		f << "<ul>\n";
 		for (TCommandInfo::const_iterator c=i->second.begin();c!=i->second.end();++c)
 		{
-			f << "<li> <b><a href=\""<< mods[c->first].URL <<"\" >" << validTextHTML(c->first) << "</a></b>. Effects: ";
+			f << "<li> <b><a href=\""<< mods[c->first].URL <<"\" >" << validTextHTML(c->first,false) << "</a></b>. Effects: ";
 			if (c->second.short_desc.empty())
 				f << "(not described)";
-			else f << validTextHTML(c->second.short_desc);
+			else f << validTextHTML(c->second.short_desc,true);
 			f << "<br>";
 			f << c->second.desc << "\n";
 			f << "</li>";
@@ -616,14 +616,14 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 			ret+="<a href=\"";
 			ret+=i->second.URL;
 			ret+="\" > <small>";
-			ret+=validTextHTML(i->first);
+			ret+=validTextHTML(i->first,false);
 			ret+="</small> </a></td>\n";
 
 			// Short desc:
 			ret+=" <td align=\"left\"> <small>";
 			if (i->second.short_desc.empty())
 					ret+="(no description)";
-			else	ret+=validTextHTML(i->second.short_desc);
+			else	ret+=validTextHTML(i->second.short_desc,true);
 			ret+= "</small> </td>\n";
 
 			// publishes:
@@ -632,7 +632,7 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 			{
 				if (s!=i->second.publishes.begin())
 					ret+=", ";
-				ret+= safeHREF(vars,*s,validTextHTML(*s));
+				ret+= safeHREF(vars,*s,validTextHTML(*s,false));
 			}
 			ret+="</small> </td>\n";
 
@@ -642,7 +642,7 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 			{
 				if (s!=i->second.subscribes.begin())
 					ret+=", ";
-				ret+= safeHREF(vars,*s,validTextHTML(*s));
+				ret+= safeHREF(vars,*s,validTextHTML(*s,false));
 			}
 			ret+="</small> </td>\n";
 
@@ -675,14 +675,14 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 			ret+="<a href=\"";
 			ret+=i->second.URL;
 			ret+="\" > <small>";
-			ret+=validTextHTML(i->first);
+			ret+=validTextHTML(i->first,false);
 			ret+="</small> </a></td>\n";
 
 			// Short desc:
 			ret+=" <td align=\"left\"> <small>";
 			if (i->second.short_desc.empty())
 					ret+="(no description)";
-			else	ret+=validTextHTML(i->second.short_desc);
+			else	ret+=validTextHTML(i->second.short_desc,true);
 			ret+= "</small> </td>\n";
 
 			// published:
@@ -693,7 +693,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 					if (CompareCI(*s,i->first))
 						modsPub.insert(m->first);
 			for (StrSet::const_iterator s=modsPub.begin();s!=modsPub.end();++s)
-				ret+= safeHREF(mods,*s,validTextHTML(*s));
+				ret+= safeHREF(mods,*s,validTextHTML(*s,false));
 			ret+="</small> </td>\n";
 
 			// subscribed to:
@@ -704,7 +704,7 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 					if (CompareCI(*s,i->first))
 						modsSub.insert(m->first);
 			for (StrSet::const_iterator s=modsSub.begin();s!=modsSub.end();++s)
-				ret+= safeHREF(mods,*s,validTextHTML(*s));
+				ret+= safeHREF(mods,*s,validTextHTML(*s,false));
 			ret+="</small> </td>\n";
 
 			ret+="</tr>\n";
@@ -736,14 +736,14 @@ string TApplication::generateHTMLTableOfMissions(const string &mission)
 			ret+="<a href=\"";
 			ret+=i->second.URL;
 			ret+="\" > <small>";
-			ret+=validTextHTML(i->first);
+			ret+=validTextHTML(i->first,false);
 			ret+="</small> </a></td>\n";
 
 			// Short desc:
 			ret+=" <td align=\"left\"> <small>";
 			if (i->second.short_desc.empty())
 					ret+="(no description)";
-			else	ret+=validTextHTML(i->second.short_desc);
+			else	ret+=validTextHTML(i->second.short_desc,true);
 			ret+= "</small> </td>\n";
 
 			// modules:
@@ -752,7 +752,7 @@ string TApplication::generateHTMLTableOfMissions(const string &mission)
 			{
 				if (s!=i->second.modules.begin())
 					ret+=", ";
-				ret+= safeHREF(mods,*s,validTextHTML(*s));
+				ret+= safeHREF(mods,*s,validTextHTML(*s,false));
 			}
 			ret+="</small> </td>\n";
 

@@ -210,7 +210,7 @@ namespace mooxygen
 
 	std::string fileNameStripInvalidChars( const std::string &filename);
 
-	string validTextHTML(const string &str); //! Remove invalid chars, eg. "<" -> "&lt;"
+	string validTextHTML(const string &str, bool allowSubSetHTMLtags); //! Escape HTML entities (remove invalid chars, eg. "<" -> "&lt;")
 
 	string nowAsString();
 
