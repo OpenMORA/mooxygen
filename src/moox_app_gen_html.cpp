@@ -434,11 +434,11 @@ string TApplication::generateGraphHTML_PNG(
 		// Modules: --------------------
 		f << FORMAT_MODS << endl;
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
-			f << i->first << " [URL=\"" << i->second.URL <<   "\"];" << endl;
+			f << "\"" << i->first << "\"" << " [URL=\"" << i->second.URL <<   "\"];" << endl;
 		// Vars:
 		f << FORMAT_VARS << endl;
 		for (TVarList::iterator i=vars.begin();i!=vars.end();++i)
-			f << i->first << " [URL=\"" << i->second.URL <<   "\"];" << endl;
+			f << "\"" << i->first << "\"" << " [URL=\"" << i->second.URL <<   "\"];" << endl;
 		// Publishes:
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
 			for (StrSet::const_iterator p=i->second.publishes.begin();p!=i->second.publishes.end();++p)
@@ -475,7 +475,7 @@ string TApplication::generateGraphHTML_PNG(
 			{
 				myMods.insert(i->first);
 
-				f << i->first << " [";
+				f << "\"" << i->first << "\"" << " [";
 				if (CompareCI(only_mod,i->first))
 						f << "penwidth=4, ";
 				else	f << "fillcolor=\"white\",";
@@ -486,7 +486,7 @@ string TApplication::generateGraphHTML_PNG(
 		// Vars:
 		f << FORMAT_VARS << endl;
 		for (StrSet::iterator i=myVars.begin();i!=myVars.end();++i)
-			f << *i<< " [URL=\"" << vars[*i].URL <<   "\"];" << endl;
+			f << "\"" << *i<< "\"" << " [URL=\"" << vars[*i].URL <<   "\"];" << endl;
 
 		// Publishes:
 		for (TModList::iterator i=mods.begin();i!=mods.end();++i)
@@ -532,11 +532,11 @@ string TApplication::generateGraphHTML_PNG(
 		// Modules:
 		f << FORMAT_MODS << endl;
 		for (StrSet::iterator i=myNodes.begin();i!=myNodes.end();++i)
-			f << *i << " [fillcolor=\"white\", URL=\"" << mods[*i].URL <<"\"];" << endl;
+			f << "\"" << *i << "\"" << " [fillcolor=\"white\", URL=\"" << mods[*i].URL <<"\"];" << endl;
 
 		// Vars:
 		f << FORMAT_VARS << endl;
-		f << only_var << " [URL=\"" << vars[only_var].URL << "\"];" << endl;
+		f << "\"" << only_var << "\"" << " [URL=\"" << vars[only_var].URL << "\"];" << endl;
 
 		// Publishes:
 		f << FORMAT_MODS << endl;

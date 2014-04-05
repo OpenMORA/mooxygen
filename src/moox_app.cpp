@@ -437,7 +437,7 @@ void TApplication::processCommentBlocks(
 				anyCommand=true;
 
 				string rest = trim(s.substr(p+strlen("@moos_publish")));
-				size_t p=rest.find_first_of(" \t");
+				size_t p=rest.find_first_of(", \t");
 				string varNam;
 				if (p==string::npos && p>0)
 					 varNam = rest;
