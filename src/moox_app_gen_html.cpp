@@ -158,13 +158,28 @@ bool TApplication::generateOutput_HTML()
 		f << "</ul><br>\n";
 
 		f << "<u>Parameters accepted in the MOOS mission file:</u><br>\n";
-		f << "<ul>\n";
+
 		if (i->second.params.empty())
-			f << "<li>(None)</li>\n";
-		else for (map<string,string,ci_less>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
-			f << "<li> <b>" << validTextHTML(p->first, false) << ":</b> "
-			  << validTextHTML(p->second, true) << "</li>\n";
-		f << "</ul>\n";
+		{
+			f << "<p>(None)</p>\n";
+		}
+		else
+		{
+			f << "<div align=\"center\" ><table class=\"mooxygen\" width=\"95%\" >\n";
+			f << "<tr>\n";
+			f << " <td align=\"center\" bgcolor=\"lightgrey\"> <b>Parameter</b> </td>\n";
+			f << " <td align=\"center\" bgcolor=\"lightgrey\"> <b>Description</b> </td>\n";
+			f << "</tr>\n";
+
+			for (map<string,string,ci_less>::const_iterator p=i->second.params.begin();p!=i->second.params.end();++p)
+			{
+				f << "<tr>\n";
+				f << " <td align=\"center\"> <code>" << validTextHTML(p->first, false) << "</code> </td>\n";
+				f << " <td> "  << validTextHTML(p->second, true) <<" </td>\n";
+				f << "</tr>\n";
+			}
+			f << "</table></div>\n";
+		}
 
 		f << "<br><u>Detailed description:</u><br>\n";
 		f << validTextHTML(i->second.getDesc(), true);
@@ -601,10 +616,10 @@ string TApplication::generateHTMLTableOfModules(const string &mod)
 
 	ret+="<br> <div align=\"center\" ><table class=\"mooxygen\" width=\"95%\" >\n";
 	ret+="<tr>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Module name</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Short description</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Publishes</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Subscribes</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Module name</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Short description</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Publishes</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Subscribes</b> </td>\n";
 	ret+="</tr>\n";
 
 	for (TModList::iterator i=mods.begin();i!=mods.end();++i)
@@ -660,10 +675,10 @@ string TApplication::generateHTMLTableOfVariables(const string &var)
 
 	ret+="<br> <div align=\"center\" ><table class=\"mooxygen\" width=\"95%\" >\n";
 	ret+="<tr>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Variable name</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Short description</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Who publishes it?</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Who subscribes to it?</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Variable name</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Short description</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Who publishes it?</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Who subscribes to it?</b> </td>\n";
 	ret+="</tr>\n";
 
 	for (TVarList::iterator i=vars.begin();i!=vars.end();++i)
@@ -722,9 +737,9 @@ string TApplication::generateHTMLTableOfMissions(const string &mission)
 
 	ret+="<br> <div align=\"center\" ><table class=\"mooxygen\" width=\"95%\" >\n";
 	ret+="<tr>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Mission file</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Short description</b> </td>\n";
-	ret+=" <td align=\"center\" bgcolor=\"grey\"> <b>Modules</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Mission file</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Short description</b> </td>\n";
+	ret+=" <td align=\"center\" bgcolor=\"lightgrey\"> <b>Modules</b> </td>\n";
 	ret+="</tr>\n";
 
 	for (TMissionList::iterator i=missions.begin();i!=missions.end();++i)
