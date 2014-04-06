@@ -1,6 +1,6 @@
 /* +---------------------------------------------------------------------------+
    |                          The Mooxygen project                             |
-   |                    http://code.google.com/p/mooxygen/                     |
+   |                    https://github.com/jlblancoc/mooxygen                  |
    |                                                                           |
    | Copyright (C) 2009-2010 Jose Luis Blanco <joseluisblancoc at gmail.com >  |
    |                                                                           |
@@ -47,7 +47,6 @@ CMooxygenOptions::CMooxygenOptions()
 
 	m_defaults["HTML_HEAD_EXTRA_CODE"]="";
 	m_defaults["HTML_TAIL_EXTRA_CODE"]="";
-	m_defaults["HTML_MAINPAGE_EXTRA_CODE"]="";
 }
 
 bool CMooxygenOptions::loadFromFile(const string &f) /// false on error
@@ -128,7 +127,7 @@ bool CMooxygenOptions::saveTemplateFile(const string &f) const /// false on erro
 	}
 
 	fo << "// Template Mooxyfile project" << endl;
-	fo << "//  For more help:  http://code.google.com/p/mooxygen/" << endl;
+	fo << "//  For more help:  https://github.com/jlblancoc/mooxygen" << endl;
 	fo << "//-----------------------------------------------------------" << endl;
 
 	for( Str2StrMap::const_iterator it=m_defaults.begin();it!=m_defaults.end();++it)

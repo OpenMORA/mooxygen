@@ -2,8 +2,8 @@
 # Root CMake file for the Mooxygen project
 #  Run with "cmake ." or "cmakegui" 
 #
-#  Jose Luis Blanco <jlblanco@ctima.uma.es>
-#   http://code.google.com/p/mooxygen/
+#  Jose Luis Blanco <jlblanco@ual.es>
+#  https://github.com/jlblancoc/mooxygen
 # ----------------------------------------------------------------------------
 
 PROJECT(mooxygen)
@@ -68,8 +68,8 @@ IF(WIN32)
 	# --------------------------------
 	SET(CPACK_SOURCE_IGNORE_FILES ".svn/;.*~;build;CMakeCache.txt;_CPack_Pakages/;CMakeFiles/;install/;Makefile;*.cmake")
 
-	SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\http://code.google.com/p/mooxygen/")
-	SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.isa.uma.es\\\\jlblanco")
+	SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\https://github.com/jlblancoc/mooxygen")
+	SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.ual.es\\\\jlblanco")
 	SET(CPACK_NSIS_CONTACT "joseluisblancoc@gmail.com")
 	
 	# Add mrpt/bin dir to system PATH

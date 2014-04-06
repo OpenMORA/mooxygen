@@ -1,6 +1,6 @@
 /* +---------------------------------------------------------------------------+
    |                          The Mooxygen project                             |
-   |                    http://code.google.com/p/mooxygen/                     |
+   |                    https://github.com/jlblancoc/mooxygen                  |
    +---------------------------------------------------------------------------+ */
 
 #ifndef moox_version_H

@@ -1,6 +1,6 @@
 /* +---------------------------------------------------------------------------+
    |                          The Mooxygen project                             |
-   |                    http://code.google.com/p/mooxygen/                     |
+   |                    https://github.com/jlblancoc/mooxygen                  |
    |                                                                           |
    | Copyright (C) 2009-2010 Jose Luis Blanco <joseluisblancoc at gmail.com >  |
    |                                                                           |
@@ -155,7 +155,7 @@ void showUsage(const char *cmdLine)
 	cout << "    or: " << cmdLine << " --create" << endl;
 	cout << "  If invoked without arguments, the configuration file will be assumed to be \"Mooxyfile\"" << endl;
 	cout << "  On a --create command, a Mooxyfile file will be created with a template project file." << endl;
-	cout << "  For more help:  http://code.google.com/p/mooxygen/" << endl;
+	cout << "  For more help:  https://github.com/jlblancoc/mooxygen" << endl;
 }
 
 // ------------------------------------------------------

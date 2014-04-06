@@ -1,6 +1,6 @@
 /* +---------------------------------------------------------------------------+
    |                          The Mooxygen project                             |
-   |                    http://code.google.com/p/mooxygen/                     |
+   |                    https://github.com/jlblancoc/mooxygen                  |
    |                                                                           |
    | Copyright (C) 2009-2010 Jose Luis Blanco <joseluisblancoc at gmail.com >  |
    |                                                                           |

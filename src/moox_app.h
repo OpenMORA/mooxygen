@@ -1,6 +1,6 @@
 /* +---------------------------------------------------------------------------+
    |                          The Mooxygen project                             |
-   |                    http://code.google.com/p/mooxygen/                     |
+   |                    https://github.com/jlblancoc/mooxygen                  |
    |                                                                           |
    | Copyright (C) 2009-2010 Jose Luis Blanco <joseluisblancoc at gmail.com >  |
    |                                                                           |
@@ -42,6 +42,7 @@ namespace mooxygen
 		CMooxygenOptions  opts;
 
 		// Data ------------------------------
+		string mainPage;  //!< The text of the main page (if not redefined, there is a predefined short text)
 		typedef list<TFileInfo> TSourcesList;
 
         // Modules:
@@ -95,15 +96,25 @@ namespace mooxygen
 			string URL;
 		};
 
+		struct TPipeLineInfo
+		{
+			string	URL;    //!< "pipeline_<SANITAZED_NAME>.html"
+			StrSet  modules;
+			string 	short_desc;
+			string	desc;
+		};
+
 		typedef Str2ValueCIMap<TModuleInfo> 	TModList;
 		typedef Str2ValueCIMap<TVariableInfo> 	TVarList;
 		typedef Str2ValueCIMap<TCommandInfo> 	TCmdList; //! cmd name -> info for each module
-		typedef std::map<std::string, TMissionFileInfo> TMissionList; //! cmd name -> info for each module
+		typedef std::map<std::string, TMissionFileInfo> TMissionList; 
+		typedef Str2ValueCIMap<TPipeLineInfo> 	TPipelineList; 
 
 		TModList mods;
 		TVarList vars;
 		TCmdList cmds;
 		TMissionList missions; //!< Keys are file paths
+		TPipelineList pipelines; //!< Keys are pipeline names
 
 
 		// Methods ---------------------------
@@ -129,6 +140,8 @@ namespace mooxygen
 		string generateHTMLTableOfModules(const string &mod=string());
 		string generateHTMLTableOfVariables(const string &var=string());
 		string generateHTMLTableOfMissions(const string &var=string());
+		string generateHTMLTableOfPipelines(const string &var=string());
+		
 
 		string generateGraphHTML_PNG(
 			const string &only_mod,

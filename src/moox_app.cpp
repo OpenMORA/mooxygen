@@ -1,6 +1,6 @@
 /* +---------------------------------------------------------------------------+
    |                          The Mooxygen project                             |
-   |                    http://code.google.com/p/mooxygen/                     |
+   |                    https://github.com/jlblancoc/mooxygen                  |
    |                                                                           |
    | Copyright (C) 2009-2010 Jose Luis Blanco <joseluisblancoc at gmail.com >  |
    |                                                                           |
@@ -114,6 +114,15 @@ bool TApplication::scanForMissionFiles()
 
 bool TApplication::parseSourceFiles()
 {
+#define MOOS_URL "http://www.robots.ox.ac.uk/~mobile/MOOS/wiki/pmwiki.php"
+
+	// Set default main page before parsing user files: 
+	const string  PROJECT_NAME = opts.get("PROJECT");
+	mainPage = string("This is the overview of all the <a href=\"" MOOS_URL "\" >MOOS</a> modules and variables for the project "
+			"<i>")+ PROJECT_NAME + string("</i>.<br>\n"
+			"Use the tabs above to navigate among the documentation.<br>\n");
+
+	// Parse:	
 	for(TSourcesList::const_iterator i=lstSourceFiles.begin();i!=lstSourceFiles.end();++i)
 		if (!parseOneSourceFile(*i))
 			return false;
