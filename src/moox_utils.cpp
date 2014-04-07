@@ -962,7 +962,7 @@ bool htmlValidTag(const std::string &s, std::string &r, size_t &i)
 			if (p!=std::string::npos)
 			{
 				r+= s.substr(i,p-i+1);
-				i = p+1;
+				i = p;
 				return true;
 			}
 		}
