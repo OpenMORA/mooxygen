@@ -181,7 +181,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 					in_comment_block = false;
 					in_comment=false;
 				}
-				comment_block.push_back( s );
+				comment_block.push_back( s + std::string(" ") );
 			}
 			else
 			{
@@ -197,10 +197,14 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 					comment_block.push_back( s );
 				}
 			}
+			
+		}
 
+		{
 			// Also, try to autodetect common MOOS C++ code:
 			//   m_Comms.Notify("VAR_NAME"
 			//
+			size_t p;
 			if (string::npos!= (p=upperCase(lin).find("M_COMMS.NOTIFY(")))
 			{
 				// After the ["M_COMMS.NOTIFY("] there must be a '"', a string, a '"', then ',', ignoring whitespaces.
@@ -273,7 +277,7 @@ bool TApplication::parseOneSourceFile( const TSourcesList::value_type fil )
 					if (p!=string::npos)
 					{
 						s = s.substr(p);
-						comment_block.push_back(s);
+						comment_block.push_back(s + std::string(" "));
 					}
 				}
 			}
