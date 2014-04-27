@@ -1,5 +1,6 @@
 Mooxygen
 ==========
+(https://travis-ci.org/jlblancoc/mooxygen.png?branch=master)](https://travis-ci.org/jlblancoc/mooxygen)
 
 Mooxygen is a tool that scans a directory tree containing one or 
 several MOOS modules and generates documentation about 
