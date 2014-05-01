@@ -14,5 +14,5 @@ mainly focused on mobile robotics.
 
 License: GNU General Public License 3
 
-Help and usage: https://github.com/jlblancoc/mooxygen/wiki
+Help and usage: https://github.com/OpenMORA/mooxygen/wiki
 
